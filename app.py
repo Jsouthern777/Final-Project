@@ -112,15 +112,19 @@ def post_register():
             if form.verification_password.data != app.config["EDITOR_VERIFICATION_PASSWORD"]:
                 flash("Incorrect password for editor position")
                 return redirect(url_for('get_register'))
+            role = Role.Editor  
         elif form.role.data == "Admin":
             if form.verification_password.data != app.config["ADMIN_VERIFICATION_PASSWORD"]:
                 flash("Incorrect password for admin position")
                 return redirect(url_for('get_register'))
+            role = Role.Admin
+        else:
+            role = Role.Viewer
         # check if there is already a user with this email address
         user = User.query.filter_by(email=form.email.data).first()
         # if the email address is free, create a new user and send to login
         if user is None:
-            user = User(email=form.email.data, password=form.password.data) # type:ignore
+            user = User(email=form.email.data, password=form.password.data, role=form.role.data) # type:ignore
             db.session.add(user)
             db.session.commit()
             return redirect(url_for('get_login'))
@@ -147,6 +151,14 @@ def post_login():
         user = User.query.filter_by(email=form.email.data).first()
         # if this user exists and the password matches
         if user is not None and user.verify_password(form.password.data):
+
+            if user.role in [Role.Editor, Role.Admin]:
+                # Verify the additional verification password
+                required_password = app.config["EDITOR_VERIFICATION_PASSWORD"] if user.role == Role.Editor else app.config["ADMIN_VERIFICATION_PASSWORD"]
+                if not form.verification_password.data or form.verification_password.data != required_password:
+                    flash('A valid verification password is required for Editor and Admin roles.')
+                    return redirect(url_for('get_login'))
+
             # log this user in through the login_manager
             login_user(user)
             # redirect the user to the page they wanted or the home page

@@ -15,7 +15,7 @@ class RegisterForm(FlaskForm):
         validators=[InputRequired(), Length(min=8, max=256)])
     confirm_password = PasswordField("Confirm Password: ", 
         validators=[EqualTo('password')])
-    role = SelectField("Role:", choices=[(role.name) for role in Role], validators=[InputRequired()], default=Role.Viewer.name)
+    role = SelectField("Role:", choices=[(role.name) for role in Role], validators=[InputRequired()])
     verification_password = PasswordField("Verification Password:", validators=[Optional()])
     submit = SubmitField("Register")
 
@@ -24,4 +24,5 @@ class LoginForm(FlaskForm):
     email = EmailField("Email: ", validators=[InputRequired(), Email()])
     password = PasswordField("Password: ", 
         validators=[InputRequired(), Length(min=8, max=256)])
+    verification_password = PasswordField("Verification Password:")
     submit = SubmitField("Login")
