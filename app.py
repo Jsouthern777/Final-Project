@@ -15,6 +15,7 @@ from flask import request, session, flash
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin, LoginManager, login_required
 from flask_login import login_user, logout_user, current_user
+from enum import Enum
 
 # Import from local package files
 from hashing_examples import UpdatedHasher
@@ -43,6 +44,8 @@ app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
 app.config['SECRET_KEY'] = 'correcthorsebatterystaple'
 app.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:///{dbfile}"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config["ADMIN_VERIFICATION_PASSWORD"] = "collegekidsanddivorcedmen697"
+app.config["EDITOR_VERIFICATION_PASSWORD"] = "drdudthatesthezetas99"
 
 # Getting the database object handle from the app
 db = SQLAlchemy(app)
@@ -62,11 +65,18 @@ def load_user(uid: int) -> User|None:
 # Database Setup
 ###############################################################################
 
+# enum for role selection
+class Role(Enum):
+    Viewer = 1
+    Editor = 2
+    Admin = 3
+
 # Create a database model for Users
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.Unicode, nullable=False)
     password_hash = db.Column(db.LargeBinary) # hash is a binary attribute
+    role = db.Column(db.Enum(Role), nullable=False)
 
     # make a write-only password property that just updates the stored hash
     @property
@@ -97,6 +107,15 @@ def get_register():
 def post_register():
     form = RegisterForm()
     if form.validate():
+        #check if editor or admin role is selected and verify the password
+        if form.role.data == "Editor":
+            if form.verification_password.data != app.config["EDITOR_VERIFICATION_PASSWORD"]:
+                flash("Incorrect password for editor position")
+                return redirect(url_for('get_register'))
+        elif form.role.data == "Admin":
+            if form.verification_password.data != app.config["ADMIN_VERIFICATION_PASSWORD"]:
+                flash("Incorrect password for admin position")
+                return redirect(url_for('get_register'))
         # check if there is already a user with this email address
         user = User.query.filter_by(email=form.email.data).first()
         # if the email address is free, create a new user and send to login

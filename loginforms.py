@@ -1,6 +1,12 @@
 from flask_wtf import FlaskForm
-from wtforms.fields import PasswordField, SubmitField, EmailField
-from wtforms.validators import InputRequired, Email, EqualTo, Length
+from wtforms.fields import PasswordField, SubmitField, EmailField, SelectField
+from wtforms.validators import InputRequired, Email, EqualTo, Length, Optional
+from enum import Enum
+
+class Role(Enum):
+    Viewer = 1
+    Editor = 2
+    Admin = 3
 
 # define our own FlaskForm subclass for our form
 class RegisterForm(FlaskForm):
@@ -9,6 +15,8 @@ class RegisterForm(FlaskForm):
         validators=[InputRequired(), Length(min=8, max=256)])
     confirm_password = PasswordField("Confirm Password: ", 
         validators=[EqualTo('password')])
+    role = SelectField("Role:", choices=[(role.name) for role in Role], validators=[InputRequired()], default=Role.Viewer.name)
+    verification_password = PasswordField("Verification Password:", validators=[Optional()])
     submit = SubmitField("Register")
 
 # define our own FlaskForm subclass for our form

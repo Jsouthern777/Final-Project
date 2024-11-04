@@ -8,6 +8,23 @@
 
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ" crossorigin="anonymous"></script>
+
+  
+  <script>
+    document.addEventListener("DOMContentLoaded", function(){
+      const roleSelect = document.getElementById("role");
+      const verificationField = document.getElementById("verification_password_field");
+
+      roleSelect.addEventListener("change", function() {
+        if (roleSelect.value === "Editor" || roleSelect.value === "Admin"){
+          verificationField.style.display = "block";
+        } else {
+          verificationField.style.display = "none";
+        }
+      });
+    });
+  </script>
+
 </head>
 <body>
   <header>
@@ -35,6 +52,13 @@
       {{form.confirm_password.label}}
       {{form.confirm_password()}}
       <br>
+      {{form.role.label}}
+      {{form.role()}}
+      <br>
+      <div id="verification_password_field" style="display: none;">
+        {{form.verification_password.label}}
+        {{form.verification_password()}}
+      </div>
       {{form.submit()}}
     </form>
   </main>
