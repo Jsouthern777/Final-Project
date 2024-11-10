@@ -10,11 +10,12 @@ python -m pip install --upgrade flask-login
 ###############################################################################
 from __future__ import annotations
 import os
-from flask import Flask, render_template, url_for, redirect
+from flask import Flask, render_template, url_for, redirect, current_app
 from flask import request, session, flash
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin, LoginManager, login_required
 from flask_login import login_user, logout_user, current_user
+from functools import wraps
 from enum import Enum
 from eventforms import EventForm
 from werkzeug.utils import secure_filename
@@ -76,10 +77,14 @@ class Role(Enum):
 
 # Create a database model for Users
 class User(UserMixin, db.Model):
+    __tablename__ = 'Users'
     id = db.Column(db.Integer, primary_key=True)
+    firstName = db.Column(db.Unicode, nullable=False)
+    lastName = db.Column(db.Unicode, nullable=False)
     email = db.Column(db.Unicode, nullable=False)
     password_hash = db.Column(db.LargeBinary) # hash is a binary attribute
     role = db.Column(db.Enum(Role), nullable=False)
+    
 
     # make a write-only password property that just updates the stored hash
     @property
@@ -96,17 +101,47 @@ class User(UserMixin, db.Model):
 # Create a database model for Event
 class Event(db.Model):
     #names, group(s), logos/flyers, RSVP lists
+    __tablename__ = 'Events'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.Unicode, nullable=False)
     groupName = db.Column(db.Unicode, nullable=False)
     logo = db.Column(db.BLOB, nullable=True) 
     numRSVP = db.Column(db.Integer, nullable=True)
 
+class RegisteredUser(db.Model):
+    __tablename__ = 'RegisteredUsers'
+    id = db.Column(db.Integer, primary_key=True)
+    eventID = db.Column(db.Integer, db.ForeignKey('Events.id'))
+    userID = db.Column(db.Integer, db.ForeignKey('Users.id'))
+    event = db.relationship('Event', backref='registrations')
+    user = db.relationship('User', backref='rsvps')
+
 
 
 # remember that all database operations must occur within an app context
 with app.app_context():
     db.create_all() # this is only needed if the database doesn't already exist
+
+
+###############################################################################
+#decorator for different permissions
+###############################################################################
+
+def login_required(role="Any"):
+    def wrapper(fn):
+        @wraps(fn)
+        def decorated_view(*args, **kwargs):
+            if not current_user.is_authenticated:
+                flash("You need to be logged in to access this page.")
+                return redirect(current_app.login_manager.unauthorized())
+            
+            if role != "Any" and (not hasattr(current_user, 'role') or current_user.role.name not in role.split(", ")):
+                flash("You do not have permission to access this page")
+                return redirect(url_for('index'))
+
+            return fn(*args, **kwargs)
+        return decorated_view
+    return wrapper
 
 ###############################################################################
 # Route Handlers
@@ -138,7 +173,11 @@ def post_register():
         user = User.query.filter_by(email=form.email.data).first()
         # if the email address is free, create a new user and send to login
         if user is None:
-            user = User(email=form.email.data, password=form.password.data, role=form.role.data) # type:ignore
+            user = User(firstName=form.firstName.data,
+             lastName=form.lastName.data,
+             email=form.email.data, 
+             password=form.password.data, 
+             role=form.role.data) 
             db.session.add(user)
             db.session.commit()
             return redirect(url_for('get_login'))
@@ -164,11 +203,11 @@ def post_login():
         user = User.query.filter_by(email=form.email.data).first()
         if user is not None and user.verify_password(form.password.data):
 
-            if user.role in [Role.Editor, Role.Admin]:
-                required_password = app.config["EDITOR_VERIFICATION_PASSWORD"] if user.role == Role.Editor else app.config["ADMIN_VERIFICATION_PASSWORD"]
-                if not form.verification_password.data or form.verification_password.data != required_password:
-                    flash('A valid verification password is required for Editor and Admin roles.')
-                    return redirect(url_for('get_login'))
+            # if user.role in [Role.Editor, Role.Admin]:
+            #     required_password = app.config["EDITOR_VERIFICATION_PASSWORD"] if user.role == Role.Editor else app.config["ADMIN_VERIFICATION_PASSWORD"]
+            #     if not form.verification_password.data or form.verification_password.data != required_password:
+            #         flash('A valid verification password is required for Editor and Admin roles.')
+            #         return redirect(url_for('get_login'))
 
             login_user(user)
             next = request.args.get('next')
@@ -193,26 +232,26 @@ def index():
 
 
 @app.get('/logout/')
-@login_required
+@login_required()
 def get_logout():
     logout_user()
     flash('You have been logged out')
     return redirect(url_for('index'))
 
-@app.route('/getlogo')
-def get_logo():
-    file_data = Event.query.all()
-    image = b64encode(file_data.DATA)
+# @app.route('/getlogo')
+# def get_logo():
+#     file_data = Event.query.all()
+#     image = b64encode(file_data.DATA)
 
 @app.get('/add_event/')
-@login_required
+@login_required(role="Editor, Admin")
 def get_add_event():
     form = EventForm()
     return render_template('eventforms.html', form=form)
 
 #add event
 @app.post('/add_event/')
-@login_required
+@login_required(role="Editor, Admin")
 def post_add_event():
     form = EventForm()
     if form.validate_on_submit():
@@ -231,3 +270,22 @@ def post_add_event():
 
     return render_template('eventforms.html', form=form)
 
+
+#RSVP for an event
+@app.post('/rsvp/<int:event_id>/')
+@login_required()
+def rsvp_event(event_id):
+    event = Event.query.get_or_404(event_id)
+
+    existing_rsvp = RegisteredUser.query.filter_by(eventID=event_id, userID=current_user.id).first()
+
+    if existing_rsvp:
+        flash('You have already RSVPd for this event')
+    else:
+        new_rsvp = RegisteredUser(eventID=event_id, userID=current_user.id)
+        db.session.add(new_rsvp)
+        event.numRSVP = (event.numRSVP or 0) + 1 
+        db.session.commit()
+        flash('Successful RSVP for this event!')
+    
+    return redirect(url_for('index'))

@@ -43,6 +43,12 @@
     <form method="POST">
       {{form.hidden_tag()}}
 
+      {{form.firstName.label}}
+      {{form.firstName()}}
+      <br>
+      {{form.lastName.label}}
+      {{form.lastName()}}
+      <br>
       {{form.email.label}}
       {{form.email()}}
       <br>
@@ -64,11 +70,15 @@
   </main>
   <footer>
     <br>
+    <a href="/"> Home </a>
+    &emsp;&emsp;&emsp;&emsp;&emsp;
     <a href="/register"> Register </a>
     &emsp;&emsp;&emsp;&emsp;&emsp;
     <a href="/login"> Login </a>
     &emsp;&emsp;&emsp;&emsp;&emsp;
     <a href="/logout"> Logout </a>
+    &emsp;&emsp;&emsp;&emsp;&emsp;
+    <a href="/add_event"> Add Event </a>
     <br>
   </footer>
 </body>

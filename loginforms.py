@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms.fields import PasswordField, SubmitField, EmailField, SelectField
+from wtforms.fields import PasswordField, SubmitField, EmailField, SelectField, StringField
 from wtforms.validators import InputRequired, Email, EqualTo, Length, Optional
 from enum import Enum
 
@@ -10,6 +10,8 @@ class Role(Enum):
 
 # define our own FlaskForm subclass for our form
 class RegisterForm(FlaskForm):
+    firstName = StringField("First Name :", validators=[InputRequired()])
+    lastName = StringField("Last Name :", validators=[InputRequired()])
     email = EmailField("Email: ", validators=[InputRequired(), Email()])
     password = PasswordField("Password: ", 
         validators=[InputRequired(), Length(min=8, max=256)])

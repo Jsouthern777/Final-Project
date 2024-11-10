@@ -30,14 +30,27 @@
         <h2>Event List</h2>
         {% if events %}
         {% for event in events %}
-          <h1> {{ event.name }} </h1>
-          <h1> {{ event.groupName }} </h1>
+          <div>
+          <h3>{{ event.name }}</h3>
+          <p>Group: {{ event.groupName }}</p>
           {% if event.logo_base64 %}
-          <img src="data:image/png;base64,{{ event.logo_base64 }}" alt="Event Logo" style="max-width: 200px;">
-          {% else %}
-          <p>No logo uploaded.</p>
+            <img src="data:image/png;base64,{{ event.logo_base64 }}" alt="Event Logo" width="200" />
           {% endif %}
-        {% endfor %}
+
+        {% if current_user.is_authenticated %}
+          {% set user_rsvp = event.registrations | selectattr('userID', 'eq', current_user.id) | list %}
+            {% if user_rsvp %}
+                <p>You have RSVP’d for this event.</p>
+        {% else %}
+            <form action="{{ url_for('rsvp_event', event_id=event.id) }}" method="post">
+            <button type="submit">RSVP</button>
+          </form>
+        {% endif %}
+      {% else %}
+          <p><a href="{{ url_for('get_login') }}">Log in</a> to RSVP for events.</p>
+        {% endif %}
+      </div>
+      {% endfor %}
         {% else %}
         <p>No events found. Please add an event to see upload options.</p>
         {% endif %}
@@ -49,11 +62,15 @@
   
   <footer>
     <br>
+    <a href="/"> Home </a>
+    &emsp;&emsp;&emsp;&emsp;&emsp;
     <a href="/register"> Register </a>
     &emsp;&emsp;&emsp;&emsp;&emsp;
     <a href="/login"> Login </a>
     &emsp;&emsp;&emsp;&emsp;&emsp;
     <a href="/logout"> Logout </a>
+    &emsp;&emsp;&emsp;&emsp;&emsp;
+    <a href="/add_event"> Add Event </a>
     <br>
   </footer>
 </body>
