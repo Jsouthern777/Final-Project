@@ -24,11 +24,29 @@
   </header>
   <main>
     {% if current_user.is_authenticated %}
-      <h1>Logged in as {{current_user.email}}</h1>
+      <h1>Logged in as {{ current_user.email }}</h1>
+  
+      <div>
+        <h2>Event List</h2>
+        {% if events %}
+        {% for event in events %}
+          <h1> {{ event.name }} </h1>
+          <h1> {{ event.groupName }} </h1>
+          {% if event.logo_base64 %}
+          <img src="data:image/png;base64,{{ event.logo_base64 }}" alt="Event Logo" style="max-width: 200px;">
+          {% else %}
+          <p>No logo uploaded.</p>
+          {% endif %}
+        {% endfor %}
+        {% else %}
+        <p>No events found. Please add an event to see upload options.</p>
+        {% endif %}
+      </div>
     {% else %}
       <h1>Not logged in</h1>
     {% endif %}
   </main>
+  
   <footer>
     <br>
     <a href="/register"> Register </a>

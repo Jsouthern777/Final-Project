@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Event</title>
+</head>
+<body>
+    <div id="error-messages">
+        {% for msg in get_flashed_messages() %}
+        <div class="alert alert-warning alert-dismissible fade show w-50 mx-auto" role="alert">
+          {{msg}}
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endfor %}
+      </div> 
+
+      <form method="post" enctype="multipart/form-data">
+        {{ form.hidden_tag() }}
+
+        <h1> Add a new event: </h1>
+
+        {{ form.name.label }}
+        <br> 
+        {{ form.name() }}
+       <br><br>
+
+       {{ form.groupName.label }}
+       <br>
+       {{ form.groupName() }}
+       <br><br>
+
+        {{ form.logo.label }}
+        <br>
+        {{ form.logo() }}
+        <br><br>
+       {{ form.submit() }}
+
+      </form>
+    </div> 
+</body>
+</html>
