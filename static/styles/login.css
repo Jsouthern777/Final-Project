@@ -1,0 +1,20 @@
+a[href="/resgister/"] {
+  font-size: large;
+  font-weight: bold;
+  padding: 1rem;
+  margin: auto;
+  margin-top: 3rem;
+  margin-bottom: 1rem;
+  display: block;
+  width: 15rem;
+  text-align: center;
+  border-style: solid;
+  border-radius: 1rem;
+  border-color: gray;
+  color: lightgray;
+}
+
+a[href="/register/"]:hover {
+  background-color: gray;
+  color: lightgray;
+}
