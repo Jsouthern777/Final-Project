@@ -36,15 +36,17 @@
           {% if event.logo_base64 %}
             <img src="data:image/png;base64,{{ event.logo_base64 }}" alt="Event Logo" width="200" />
           {% endif %}
-
-        {% if current_user.is_authenticated %}
           {% set user_rsvp = event.registrations | selectattr('userID', 'eq', current_user.id) | list %}
             {% if user_rsvp %}
-                <p>You have RSVP’d for this event.</p>
-        {% else %}
-            <form action="{{ url_for('rsvp_event', event_id=event.id) }}" method="post">
-            <button type="submit">RSVP</button>
-          </form>
+              <p>You have RSVP’d for this event.</p>
+              <form action="{{ url_for('rsvp_event', event_id=event.id) }}" method="post">
+              <button type="submit">RSVP</button>
+              </form>
+            {% else %}
+              <p>You have un-RSVP’d for this event.</p>
+              <form action="{{ url_for('rsvp_event', event_id=event.id) }}" method="post">
+              <button type="submit">RSVP</button>
+              </form>
         {% endif %}
       {% else %}
           <p><a href="{{ url_for('get_login') }}">Log in</a> to RSVP for events.</p>

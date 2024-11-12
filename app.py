@@ -107,6 +107,7 @@ class Event(db.Model):
     groupName = db.Column(db.Unicode, nullable=False)
     logo = db.Column(db.BLOB, nullable=True) 
     numRSVP = db.Column(db.Integer, nullable=True)
+    numReports = db.Colum(db.Integer, nullable=True)
 
 class RegisteredUser(db.Model):
     __tablename__ = 'RegisteredUsers'
@@ -115,6 +116,14 @@ class RegisteredUser(db.Model):
     userID = db.Column(db.Integer, db.ForeignKey('Users.id'))
     event = db.relationship('Event', backref='registrations')
     user = db.relationship('User', backref='rsvps')
+
+class Reported(db.Model):
+    __tablename__ = 'ReportedEvents'
+    id = db.Column(db.Integer, primary_key=True)
+    eventID = db.Column(db.Integer, db.ForeignKey('Events.id'))
+    userID = db.Column(db.Integer, db.ForeignKey('Users.id'))
+    event = db.relationship('Event', backref='reportedEvent')
+    user = db.relationship('User', backref='reportedBy')
 
 
 
@@ -280,7 +289,10 @@ def rsvp_event(event_id):
     existing_rsvp = RegisteredUser.query.filter_by(eventID=event_id, userID=current_user.id).first()
 
     if existing_rsvp:
-        flash('You have already RSVPd for this event')
+        db.session.delete(existing_rsvp)
+        event.numRSVP = (event.numRSVP or 1) -1
+        db.session.commit()
+        flash('You un-rsvpd from this event')
     else:
         new_rsvp = RegisteredUser(eventID=event_id, userID=current_user.id)
         db.session.add(new_rsvp)
@@ -289,3 +301,27 @@ def rsvp_event(event_id):
         flash('Successful RSVP for this event!')
     
     return redirect(url_for('index'))
+
+    
+
+
+    #Report an event
+    @app.post('/report/<int:event_id>/')
+    @login_required()
+    def report_event(event_id):
+        event = Event.query.get_or_404(event_id)
+        existing_report = Reported.query.filter_by(eventID=event_id, userID=current_user.id).first()
+
+        if existing_report:
+            db.session.delete(existing_report)
+            event.numReports = (event.numReports or 1) -1
+            db.session.commit()
+            flash('You unreported this event')
+        else:
+            new_report = Reported(eventID=event_id, userID=current_user.id)
+            db.session.add(new_report)
+            event.numReports = (event.numReports or 0) + 1
+            db.session.commit()
+            flash('Reported event')
+        
+        return redirect(url_for('index'))
