@@ -4,8 +4,7 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Login</title>
-
+  <title>Home</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ" crossorigin="anonymous"></script>
 </head>
@@ -25,7 +24,6 @@
   <main>
     {% if current_user.is_authenticated %}
       <h1>Logged in as {{ current_user.email }}</h1>
-  
       <div>
         <h2>Event List</h2>
         {% if events %}
@@ -38,18 +36,25 @@
           {% endif %}
           {% set user_rsvp = event.registrations | selectattr('userID', 'eq', current_user.id) | list %}
             {% if user_rsvp %}
-              <p>You have RSVP’d for this event.</p>
-              <form action="{{ url_for('rsvp_event', event_id=event.id) }}" method="post">
-              <button type="submit">RSVP</button>
-              </form>
-            {% else %}
-              <p>You have un-RSVP’d for this event.</p>
-              <form action="{{ url_for('rsvp_event', event_id=event.id) }}" method="post">
-              <button type="submit">RSVP</button>
-              </form>
+                <p>You have RSVP’d for this event.</p>
+                <form action="{{ url_for('rsvp_event', event_id=event.id) }}" method="post">
+                <button type="submit">UnRSVP</button>
+                </form>
+        {% else %}
+            <form action="{{ url_for('rsvp_event', event_id=event.id) }}" method="post">
+            <button type="submit">RSVP</button>
+          </form>
         {% endif %}
-      {% else %}
-          <p><a href="{{ url_for('get_login') }}">Log in</a> to RSVP for events.</p>
+        {% set user_report = event.reportedEvent | selectattr('userID', 'eq', current_user.id) | list %}
+            {% if user_report %}
+                <p>You have reported this event.</p>
+                <form action="{{ url_for('report_event', event_id=event.id) }}" method="post">
+                <button type="submit">Un-report</button>
+                </form>
+        {% else %}
+            <form action="{{ url_for('report_event', event_id=event.id) }}" method="post">
+            <button type="submit">Report</button>
+            </form>
         {% endif %}
       </div>
       {% endfor %}
@@ -61,7 +66,6 @@
       <h1>Not logged in</h1>
     {% endif %}
   </main>
-  
   <footer>
     <br>
     <a href="/"> Home </a>
@@ -73,6 +77,8 @@
     <a href="/logout"> Logout </a>
     &emsp;&emsp;&emsp;&emsp;&emsp;
     <a href="/add_event"> Add Event </a>
+    &emsp;&emsp;&emsp;&emsp;&emsp;
+    <a href="/report_event"> Reported Events </a
     <br>
   </footer>
 </body>

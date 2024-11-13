@@ -12,6 +12,7 @@ from __future__ import annotations
 import os
 from flask import Flask, render_template, url_for, redirect, current_app
 from flask import request, session, flash
+from flask import url_for
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin, LoginManager, login_required
 from flask_login import login_user, logout_user, current_user
@@ -107,7 +108,7 @@ class Event(db.Model):
     groupName = db.Column(db.Unicode, nullable=False)
     logo = db.Column(db.BLOB, nullable=True) 
     numRSVP = db.Column(db.Integer, nullable=True)
-    numReports = db.Colum(db.Integer, nullable=True)
+    numReports = db.Column(db.Integer, nullable=True)
 
 class RegisteredUser(db.Model):
     __tablename__ = 'RegisteredUsers'
@@ -302,26 +303,51 @@ def rsvp_event(event_id):
     
     return redirect(url_for('index'))
 
-    
 
+#Report an event
+@app.post('/report/<int:event_id>')
+@login_required()
+def report_event(event_id):
+    print("called")
+    event = Event.query.get_or_404(event_id)
+    existing_report = Reported.query.filter_by(eventID=event_id, userID=current_user.id).first()
 
-    #Report an event
-    @app.post('/report/<int:event_id>/')
-    @login_required()
-    def report_event(event_id):
-        event = Event.query.get_or_404(event_id)
-        existing_report = Reported.query.filter_by(eventID=event_id, userID=current_user.id).first()
-
-        if existing_report:
-            db.session.delete(existing_report)
-            event.numReports = (event.numReports or 1) -1
-            db.session.commit()
-            flash('You unreported this event')
-        else:
-            new_report = Reported(eventID=event_id, userID=current_user.id)
-            db.session.add(new_report)
-            event.numReports = (event.numReports or 0) + 1
-            db.session.commit()
-            flash('Reported event')
+    if existing_report:
+        db.session.delete(existing_report)
+        event.numReports = (event.numReports or 1) -1
+        db.session.commit()
+        flash('You unreported this event')
+    else:
+        new_report = Reported(eventID=event_id, userID=current_user.id)
+        db.session.add(new_report)
+        event.numReports = (event.numReports or 0) + 1
+        db.session.commit()
+        flash('Reported this event')
         
-        return redirect(url_for('index'))
+    return redirect(url_for('index'))
+
+@app.get('/report_event/')
+@login_required(role="Admin")
+def get_reported():
+    events = Event.query.all()
+    form = EventForm()
+    for event in events:
+        if event.logo:
+            event.logo_base64 = base64.b64encode(event.logo).decode('utf-8')
+    return render_template('reportedContent.html', form=form, events=events)
+
+#deleting an event
+@app.post('/delete/<int:event_id>/')
+@login_required(role="Admin")
+def delete_event(event_id):
+    form = EventForm()
+    events = Event.query.all()
+    existing_report = Reported.query.filter_by(eventID=event_id, userID=current_user.id).first()
+    event = Event.query.get_or_404(event_id)
+    db.session.delete(existing_report)
+    db.session.delete(event)
+    db.session.commit()
+    flash('Deleted Event')
+    return redirect(url_for('get_reported'))
+
+
