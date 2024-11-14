@@ -33,9 +33,7 @@
           <div>
           <h3>{{ event.name }}</h3>
           <p>Group: {{ event.groupName }}</p>
-          {% if event.logo_base64 %}
-            <img src="data:image/png;base64,{{ event.logo_base64 }}" alt="Event Logo" width="200" class="centered_img" />
-          {% endif %}
+          <img src="{{ url_for('static', filename=event.logo) }}" alt="Event Logo" width="300">
           {% set user_rsvp = event.registrations | selectattr('userID', 'eq', current_user.id) | list %}
             {% if user_rsvp %}
               <p>You have RSVP’d for this event.</p>

@@ -52,6 +52,10 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config["ADMIN_VERIFICATION_PASSWORD"] = "collegekidsanddivorcedmen697"
 app.config["EDITOR_VERIFICATION_PASSWORD"] = "drdudthatesthezetas99"
 
+#Configure uploading image
+UPLOAD_FOLDER = os.path.join(app.root_path, 'static', 'uploads')
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
 # Getting the database object handle from the app
 db = SQLAlchemy(app)
 
@@ -106,7 +110,7 @@ class Event(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.Unicode, nullable=False)
     groupName = db.Column(db.Unicode, nullable=False)
-    logo = db.Column(db.BLOB, nullable=True) 
+    logo = db.Column(db.String, nullable=True) 
     numRSVP = db.Column(db.Integer, nullable=True)
     numReports = db.Column(db.Integer, nullable=True)
 
@@ -235,9 +239,7 @@ def post_login():
 @app.get('/')
 def index():
     events = Event.query.all()
-    for event in events:
-        if event.logo:
-            event.logo_base64 = base64.b64encode(event.logo).decode('utf-8')
+
     return render_template('home.html', current_user=current_user, events=events)
 
 
@@ -269,8 +271,13 @@ def post_add_event():
         
         if file and file.filename != '':
             filename = secure_filename(file.filename)
-            file_data = file.read()  
-            new_event = Event(name=form.name.data, groupName=form.groupName.data, logo=file_data)
+            if not os.path.exists(app.config['UPLOAD_FOLDER']):
+                os.makedirs(app.config['UPLOAD_FOLDER'])
+
+            file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+            file.save(file_path)
+            relative_path = os.path.join('uploads', filename)
+            new_event = Event(name=form.name.data, groupName=form.groupName.data, logo=relative_path)
             db.session.add(new_event)
             db.session.commit()
             flash('Event added successfully!')

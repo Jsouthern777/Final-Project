@@ -30,9 +30,7 @@
             {% if reported %}
             <h3>{{ event.name }}</h3>
           <p>Group: {{ event.groupName }}</p>
-          {% if event.logo_base64 %}
-            <img src="data:image/png;base64,{{ event.logo_base64 }}" alt="Event Logo" width="200" />
-            {% endif %}
+          <img src="{{ url_for('static', filename=event.logo) }}" alt="Event Logo" width="300">
             <form action="{{ url_for('delete_event', event_id=event.id) }}" method="post">
               <button type="submit">Delete Event</button>
               </form>
@@ -43,15 +41,17 @@
   </main>
   <footer>
     <br>
-    <a href="/"> Home </a>
+    <a href="/" class="button"> Home </a>
     &emsp;&emsp;&emsp;&emsp;&emsp;
-    <a href="/register"> Register </a>
+    <a href="/register" class="button"> Register </a>
     &emsp;&emsp;&emsp;&emsp;&emsp;
-    <a href="/login"> Login </a>
+    <a href="/login" class="button"> Login </a>
     &emsp;&emsp;&emsp;&emsp;&emsp;
-    <a href="/logout"> Logout </a>
+    <a href="/logout" class="button"> Logout </a>
     &emsp;&emsp;&emsp;&emsp;&emsp;
-    <a href="/add_event"> Add Event </a>
+    <a href="/add_event" class="button"> Add Event </a>
+    &emsp;&emsp;&emsp;&emsp;&emsp;
+    <a href="/report_event" class="button"> Reported Events </a>
     <br>
   </footer>
 </body>
