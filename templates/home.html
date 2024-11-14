@@ -72,7 +72,9 @@
     &emsp;&emsp;&emsp;&emsp;&emsp;
     <a href="/logout" class="button"> Logout </a>
     &emsp;&emsp;&emsp;&emsp;&emsp;
+    {% if current_user.is_editor() or current_user.is_admin() %}
     <a href="/add_event" class="button"> Add Event </a>
+    {% endif %}
     &emsp;&emsp;&emsp;&emsp;&emsp;
     {% if current_user.is_authenticated and current_user.is_admin() %}
     <a href="/report_event" class="button"> Reported Events </a>

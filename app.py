@@ -92,6 +92,9 @@ class User(UserMixin, db.Model):
 
     def is_admin(self):
         return self.role == Role.Admin
+        
+    def is_editor(self):
+        return self.role == Role.Editor
     
 
     # make a write-only password property that just updates the stored hash
