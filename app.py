@@ -89,6 +89,9 @@ class User(UserMixin, db.Model):
     email = db.Column(db.Unicode, nullable=False)
     password_hash = db.Column(db.LargeBinary) # hash is a binary attribute
     role = db.Column(db.Enum(Role), nullable=False)
+
+    def is_admin(self):
+        return self.role == Role.Admin
     
 
     # make a write-only password property that just updates the stored hash
@@ -194,6 +197,19 @@ def post_register():
              role=form.role.data) 
             db.session.add(user)
             db.session.commit()
+            form = LoginForm()
+            if form.validate():
+                user = User.query.filter_by(email=form.email.data).first()
+                if user is not None and user.verify_password(form.password.data):
+                    login_user(user)
+                    next = request.args.get('next')
+                    if next is None or not next.startswith('/'):
+                        next = url_for('index')
+                    return redirect(next)
+                else: 
+                    flash('Invalid email address or password')
+                    return redirect(url_for('get_login'))
+
             return redirect(url_for('get_login'))
         else: # if the user already exists
             # flash a warning message and redirect to get registration form
@@ -217,12 +233,6 @@ def post_login():
         user = User.query.filter_by(email=form.email.data).first()
         if user is not None and user.verify_password(form.password.data):
 
-            # if user.role in [Role.Editor, Role.Admin]:
-            #     required_password = app.config["EDITOR_VERIFICATION_PASSWORD"] if user.role == Role.Editor else app.config["ADMIN_VERIFICATION_PASSWORD"]
-            #     if not form.verification_password.data or form.verification_password.data != required_password:
-            #         flash('A valid verification password is required for Editor and Admin roles.')
-            #         return redirect(url_for('get_login'))
-
             login_user(user)
             next = request.args.get('next')
             if next is None or not next.startswith('/'):
@@ -239,8 +249,12 @@ def post_login():
 @app.get('/')
 def index():
     events = Event.query.all()
-
-    return render_template('home.html', current_user=current_user, events=events)
+    if current_user.is_authenticated:
+        print(current_user.is_admin())
+        return render_template('home.html', current_user=current_user, events=events)
+    else:
+        return render_template('loggedOut.html', current_user=current_user, events=events)
+    
 
 
 @app.get('/logout/')
@@ -249,11 +263,6 @@ def get_logout():
     logout_user()
     flash('You have been logged out')
     return redirect(url_for('index'))
-
-# @app.route('/getlogo')
-# def get_logo():
-#     file_data = Event.query.all()
-#     image = b64encode(file_data.DATA)
 
 @app.get('/add_event/')
 @login_required(role="Editor, Admin")
