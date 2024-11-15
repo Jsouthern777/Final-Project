@@ -28,19 +28,26 @@ footer{
     padding-bottom: 3em;
 }
 
-.button{
-    display: inline-block;
-    padding-left: 15px;
-    padding-right: 15px;
-    padding-top: 7px;
-    padding-bottom: 7px;
+.button {
+    padding: 6px 12px;
     font-size: 16px;
-    text-align: center;
-    text-decoration: none;
-    color: white;
-    background-color: #444849;
-    border: none;
-    border-radius: 5px;
+    color: black;
+    background-color: #e9e9ed;
+    border: 1px solid #8f8f9d;
+    border-radius: 4px;
     cursor: pointer;
-    transition: background-color 0.3s;
+    text-decoration: none;  
+}
+
+.button:hover {
+    color: black;
+    background-color: #d0d0d7;
+    border: 1px solid #676774;
+    border-radius: 4px;
+    text-decoration: none;  
+}
+
+.login_logo {  
+    display: inline-block;
+    max-width: 500px;
 }

@@ -3,6 +3,10 @@ INSTALLING REQUIRED PACKAGES
 Run the following commands to install all required packages.
 python -m pip install --upgrade pip
 python -m pip install --upgrade flask-login
+python -m pip install --upgrade flask-sqlalchemy
+python -m pip install --upgrade wtforms
+python -m pip install --upgrade flask-wtf
+python -m pip install --upgrade email-validator
 """
 
 ###############################################################################
@@ -235,7 +239,6 @@ def post_login():
     if form.validate():
         user = User.query.filter_by(email=form.email.data).first()
         if user is not None and user.verify_password(form.password.data):
-
             login_user(user)
             next = request.args.get('next')
             if next is None or not next.startswith('/'):
@@ -256,7 +259,7 @@ def index():
         print(current_user.is_admin())
         return render_template('home.html', current_user=current_user, events=events)
     else:
-        return render_template('loggedOut.html', current_user=current_user, events=events)
+        return redirect(url_for('get_login'))
     
 
 
