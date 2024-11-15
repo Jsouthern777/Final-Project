@@ -8,6 +8,6 @@ class EventForm(FlaskForm):
     name = StringField("Event name: ", validators=[InputRequired()])
     groupName = StringField("Group name: ", validators=[InputRequired()])
     logo = FileField("Upload Event Logo: ")
-    submit = SubmitField("Add Event: ")
+    submit = SubmitField("Add Event")
 
 
