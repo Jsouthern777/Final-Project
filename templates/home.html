@@ -34,6 +34,12 @@
           <h3>{{ event.name }}</h3>
           <p>Group: {{ event.groupName }}</p>
           <img src="{{ url_for('static', filename=event.logo) }}" alt="Event Logo" width="300">
+          {% if event.dateTime != None %}
+            <p>Date and time: {{ event.dateTime }}</p>
+          {%else%}
+            <p>No date and time specified.</p>
+          {% endif %}
+
           {% set user_rsvp = event.registrations | selectattr('userID', 'eq', current_user.id) | list %}
             {% if user_rsvp %}
               <p>You have RSVP’d for this event.</p>

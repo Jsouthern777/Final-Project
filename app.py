@@ -123,6 +123,7 @@ class Event(db.Model):
     logo = db.Column(db.String, nullable=True) 
     numRSVP = db.Column(db.Integer, nullable=True)
     numReports = db.Column(db.Integer, nullable=True)
+    dateTime = db.Column(db.DateTime, nullable=True)
 
 class RegisteredUser(db.Model):
     __tablename__ = 'RegisteredUsers'
@@ -292,13 +293,15 @@ def post_add_event():
             file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
             file.save(file_path)
             relative_path = os.path.join('uploads', filename)
-            new_event = Event(name=form.name.data, groupName=form.groupName.data, logo=relative_path)
+            new_event = Event(name=form.name.data, groupName=form.groupName.data, logo=relative_path, dateTime=form.dateTime.data)
             db.session.add(new_event)
             db.session.commit()
             flash('Event added successfully!')
             return redirect(url_for('index'))
         else:
-            flash('No file uploaded or invalid file.')
+            flash('Please upload a file.')
+    else:
+        flash('Invalid form submission, please try again.')
 
     return render_template('eventforms.html', form=form)
 
