@@ -40,6 +40,12 @@
         <div class="field">{{ form.logo() }}</div>
         <br><br>
       </div>
+      <div class="question-container">
+        <div class="question">{{ form.dateTime.label }}</div>
+        <br>
+        <div class="field">{{ form.dateTime() }}</div>
+        <br><br>
+      </div>
       {{ form.submit() }}
       <a href="/" class="button"> Back </a>
     </form>
