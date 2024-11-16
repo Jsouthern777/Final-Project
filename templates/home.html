@@ -39,6 +39,7 @@
           {%else%}
             <p>No date and time specified.</p>
           {% endif %}
+          <p>Description: {{event.description}}</p>
 
           {% set user_rsvp = event.registrations | selectattr('userID', 'eq', current_user.id) | list %}
             {% if user_rsvp %}

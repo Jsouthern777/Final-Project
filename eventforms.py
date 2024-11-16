@@ -9,6 +9,7 @@ from enum import Enum
 class EventForm(FlaskForm):
     name = StringField("Event name: ", validators=[InputRequired()])
     groupName = StringField("Group name: ", validators=[InputRequired()])
+    description = StringField("Event description", validators=[InputRequired()])
     logo = FileField("Upload Event Logo: ")
     submit = SubmitField("Add Event: ")
     dateTime = DateTimeField("Date:  ", validators=[Optional()], widget=DateTimeLocalInput(), format='%Y-%m-%dT%H:%M' )

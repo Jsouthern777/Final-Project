@@ -120,6 +120,7 @@ class Event(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.Unicode, nullable=False)
     groupName = db.Column(db.Unicode, nullable=False)
+    description = db.Column(db.Unicode, nullable=True)
     logo = db.Column(db.String, nullable=True) 
     numRSVP = db.Column(db.Integer, nullable=True)
     numReports = db.Column(db.Integer, nullable=True)
@@ -293,7 +294,11 @@ def post_add_event():
             file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
             file.save(file_path)
             relative_path = os.path.join('uploads', filename)
-            new_event = Event(name=form.name.data, groupName=form.groupName.data, logo=relative_path, dateTime=form.dateTime.data)
+            new_event = Event(name=form.name.data, 
+                              groupName=form.groupName.data,
+                              description=form.description.data, 
+                              logo=relative_path, 
+                              dateTime=form.dateTime.data)
             db.session.add(new_event)
             db.session.commit()
             flash('Event added successfully!')
