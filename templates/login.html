@@ -23,25 +23,24 @@
         </div>
       {% endfor %}
     </div>
-    <img class="login_logo" src="../static/images/greekedin.jpg" alt="GreekedIn">
+    <img class="login-logo" src="../static/images/greekedin.jpg" alt="GreekedIn">
   </header>
   <main>
     <form method="POST">
       {{form.hidden_tag()}}
-
-      {{form.email.label}}
-      {{form.email()}}
+      <div class="question-container">
+        <div class="question">{{form.email.label}}</div>
+        <div class="field">{{form.email()}}</div>
+      </div>
+        <br>
+      <div class="question-container">
+        <div class="question">{{form.password.label}}</div>
+        <div class="field">{{form.password()}}</div>
+      </div>
       <br>
-      {{form.password.label}}
-      {{form.password()}}
-      <br>
-      {{form.submit()}}
+      <div class="form-button">{{form.submit()}}</div>
+      <a href="/register/" class="button"> Register </a>
     </form>
   </main>
-  <footer>
-    <br>
-    <a href="/register/" class="button"> Register </a>
-    <br>
-  </footer>
 </body>
 </html>

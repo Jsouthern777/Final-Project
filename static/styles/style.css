@@ -1,35 +1,67 @@
-h1{
+html, body {
+    height: 100%;
+    margin: 0;
+    font-family: Arial, sans-serif;
+}
+
+header {
     width: 100%;
     text-align: center;
-    padding: 0.5em;
 }
-h2,h3,p{
+
+.login-logo {  
+    max-width: 80%;
+    width: 400px;
+    height: auto;
+    margin: 20px auto;
+}
+
+main {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    width: 100%;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     text-align: center;
+    width: 100%;
+    max-width: 325px;
+    padding: 1em;
+    margin: 0 auto;
 }
 
-.centered_img{
+
+.question-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+    margin-bottom: 1em;
+}
+
+.question {
+    text-align: left;
+    flex: 1;
+}
+
+.field {
+    text-align: right;
+    flex: 2;
+}
+
+.form-button, .button {
     display: block;
-    margin-left: auto;
-    margin-right: auto;
-}
-.RSVP_padding{
-    padding-top: 0.5em;
-    padding-bottom: 2em;
-}
-.center_button{
-    display: block;
-    width: fit-content;
-    margin-left: auto;
-    margin-right: auto;
+    padding-top: 10px;
+    padding-bottom: 10px;
 }
 
-footer{
-    text-align: center;
-    padding-bottom: 3em;
-}
-
-.button {
-    padding: 6px 12px;
+.button, .menu-button {
+    padding: 3px 6px;
     font-size: 16px;
     color: black;
     background-color: #e9e9ed;
@@ -47,7 +79,9 @@ footer{
     text-decoration: none;  
 }
 
-.login_logo {  
-    display: inline-block;
-    max-width: 500px;
+.menu-container {
+    display: flex;
+    justify-content: space-around;
+    width: 50%;
+    margin-top: 20px;
 }

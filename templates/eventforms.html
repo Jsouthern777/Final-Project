@@ -7,51 +7,42 @@
     <title>Add Event</title>
 </head>
 <body>
-    <div id="error-messages">
-        {% for msg in get_flashed_messages() %}
+  <header>
+    <div class="container">
+      {% for msg in get_flashed_messages() %}
         <div class="alert alert-warning alert-dismissible fade show w-50 mx-auto" role="alert">
           {{msg}}
           <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
-        {% endfor %}
-      </div> 
+      {% endfor %}
+    </div>
+  </header>
+  <main>
+    <form method="post" enctype="multipart/form-data">
+      {{ form.hidden_tag() }}
 
-      <form method="post" enctype="multipart/form-data">
-        {{ form.hidden_tag() }}
-
-        <h1> Add a new event: </h1>
-
-        {{ form.name.label }}
+      <h1> Add a new event: </h1>
+      <div class="question-container">
+        <div class="question">{{ form.name.label }}</div>
         <br> 
-        {{ form.name() }}
-       <br><br>
-
-       {{ form.groupName.label }}
-       <br>
-       {{ form.groupName() }}
-       <br><br>
-
-        {{ form.logo.label }}
-        <br>
-        {{ form.logo() }}
+        <div class="field">{{ form.name() }}</div>
         <br><br>
-
-        {{ form.dateTime.label }}
+      </div>
+      <div class="question-container">
+        <div class="question">{{ form.groupName.label }}</div>
         <br>
-        {{ form.dateTime() }}
+        <div class="field">{{ form.groupName() }}</div>
         <br><br>
-
-       {{ form.submit() }}
-
-      </form>
-    </div> 
-    <footer>
-      <br>
-      <a href="/" class="button"> Home </a>
-      &emsp;&emsp;&emsp;&emsp;&emsp;
-      <a href="/logout" class="button"> Logout </a>
-      &emsp;&emsp;&emsp;&emsp;&emsp;
-      <br>
-    </footer>
+      </div>
+      <div class="question-container">
+        <div class="question">{{ form.logo.label }}</div>
+        <br>
+        <div class="field">{{ form.logo() }}</div>
+        <br><br>
+      </div>
+      {{ form.submit() }}
+      <a href="/" class="button"> Back </a>
+    </form>
+  </main> 
 </body>
 </html>

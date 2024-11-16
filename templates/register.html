@@ -39,41 +39,50 @@
         </div>
       {% endfor %}
     </div>
+    <img class="login-logo" src="../static/images/greekedin.jpg" alt="GreekedIn">
   </header>
   <main>
     <form method="POST">
       {{form.hidden_tag()}}
-
-      {{form.firstName.label}}
-      {{form.firstName()}}
+      <div class="question-container">
+        <div class="question">{{form.firstName.label}}</div>
+        <div class="field">{{form.firstName()}}</div>
+      </div>
       <br>
-      {{form.lastName.label}}
-      {{form.lastName()}}
+      <div class="question-container">
+        <div class="question">{{form.lastName.label}}</div>
+        <div class="field">{{form.lastName()}}</div>
+      </div>
       <br>
-      {{form.email.label}}
-      {{form.email()}}
+      <div class="question-container">
+        <div class="question">{{form.email.label}}</div>
+        <div class="field">{{form.email()}}</div>
+      </div>
       <br>
-      {{form.password.label}}
-      {{form.password()}}
+      <div class="question-container">
+        <div class="question">{{form.password.label}}</div>
+        <div class="field">{{form.password()}}</div>
+      </div>  
       <br>
-      {{form.confirm_password.label}}
-      {{form.confirm_password()}}
+      <div class="question-container">
+        <div class="question">{{form.confirm_password.label}}</div>
+        <div class="field">{{form.confirm_password()}}</div>
+      </div>
       <br>
-      {{form.role.label}}
-      {{form.role()}}
+      <div class="question-container">
+        <div class="question">{{form.role.label}}</div>
+        <div class="field">{{form.role()}}</div>
+      </div>
       <br>
       <div id="verification_password_field" style="display: none;">
-        {{form.verification_password.label}}
-        {{form.verification_password()}}
+        <div class="question-container">
+          <div class="question">{{form.verification_password.label}}</div>
+          <div class="field">{{form.verification_password()}}</div>
+        </div>
       </div>
-      {{form.submit()}}
+      <div class="form-button">{{form.submit()}}</div>
+      <a href="/" class="button">Back</a>
     </form>
   </main>
-  <footer>
-    <br>
-    <a href="/" class="button"> Home </a>
-    &emsp;&emsp;&emsp;&emsp;&emsp;
-    <br>
-  </footer>
 </body>
 </html>
