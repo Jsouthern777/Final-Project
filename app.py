@@ -8,6 +8,7 @@ python -m pip install --upgrade wtforms
 python -m pip install --upgrade flask-wtf
 python -m pip install --upgrade email-validator
 """
+# password sexyandsportyreagan
 
 ###############################################################################
 # Imports
@@ -17,6 +18,7 @@ import os
 from flask import Flask, render_template, url_for, redirect, current_app
 from flask import request, session, flash
 from flask import url_for
+from flask_mail import Message
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin, LoginManager, login_required
 from flask_login import login_user, logout_user, current_user
@@ -24,6 +26,7 @@ from functools import wraps
 from enum import Enum
 from eventforms import EventForm
 from werkzeug.utils import secure_filename
+from itsdangerous import URLSafeTimedSerializer
 import base64
 
 # Import from local package files
@@ -55,6 +58,17 @@ app.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:///{dbfile}"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config["ADMIN_VERIFICATION_PASSWORD"] = "collegekidsanddivorcedmen697"
 app.config["EDITOR_VERIFICATION_PASSWORD"] = "drdudthatesthezetas99"
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'  
+app.config['MAIL_PORT'] = 587  
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USE_SSL'] = False
+app.config['MAIL_USERNAME'] = 'comp442web@gmail.com'  
+app.config['MAIL_PASSWORD'] = 'dtzx glci prcu xsao'    
+app.config['MAIL_DEFAULT_SENDER'] = 'comp442web@gmail.com'
+
+from flask_mail import Mail
+mail = Mail(app)
+
 
 #Configure uploading image
 UPLOAD_FOLDER = os.path.join(app.root_path, 'static', 'uploads')
@@ -93,6 +107,7 @@ class User(UserMixin, db.Model):
     email = db.Column(db.Unicode, nullable=False)
     password_hash = db.Column(db.LargeBinary) # hash is a binary attribute
     role = db.Column(db.Enum(Role), nullable=False)
+    is_verified = db.Column(db.Boolean, default=False, nullable=False)
 
     def is_admin(self):
         return self.role == Role.Admin
@@ -146,6 +161,7 @@ class Reported(db.Model):
 
 # remember that all database operations must occur within an app context
 with app.app_context():
+    db.drop_all()
     db.create_all() # this is only needed if the database doesn't already exist
 
 
@@ -168,6 +184,39 @@ def login_required(role="Any"):
             return fn(*args, **kwargs)
         return decorated_view
     return wrapper
+
+################################################################################
+#Token generation and verification
+################################################################################
+
+serializer = URLSafeTimedSerializer(app.secret_key)
+
+def generate_confirmation_token(email):
+    return serializer.dumps(email, salt='email-confirmation-salt')
+
+def confirm_token(token, expiration=3600):
+    try:
+        email = serializer.loads(
+            token, salt='email-confirmation-salt', max_age=expiration
+        )
+    except Exception:
+        return False
+    return email
+
+################################################################################
+#Sending Verification Emails
+################################################################################
+
+def send_verification_email(user):
+    token = generate_confirmation_token(user.email)
+    confirm_url = url_for('confirm_email', token=token, _external=True)
+    html = f"""
+    <p> Welcome, {user.firstName}!</p>
+    <p> Click the link below to confirm your email address:</p>
+    <p><a href="{confirm_url}">{confirm_url}</a></p>
+    """
+    msg = Message(subject="Please confirm your email", recipients=[user.email], html=html)
+    mail.send(msg)
 
 ###############################################################################
 # Route Handlers
@@ -196,39 +245,50 @@ def post_register():
         else:
             role = Role.Viewer
         # check if there is already a user with this email address
-        user = User.query.filter_by(email=form.email.data).first()
-        # if the email address is free, create a new user and send to login
-        if user is None:
-            user = User(firstName=form.firstName.data,
-             lastName=form.lastName.data,
-             email=form.email.data, 
-             password=form.password.data, 
-             role=form.role.data) 
-            db.session.add(user)
-            db.session.commit()
-            form = LoginForm()
-            if form.validate():
-                user = User.query.filter_by(email=form.email.data).first()
-                if user is not None and user.verify_password(form.password.data):
-                    login_user(user)
-                    next = request.args.get('next')
-                    if next is None or not next.startswith('/'):
-                        next = url_for('index')
-                    return redirect(next)
-                else: 
-                    flash('Invalid email address or password')
-                    return redirect(url_for('get_login'))
+        existing_user = User.query.filter_by(email=form.email.data).first()
+        if existing_user:
+            flash('An account with this email address already exists', 'danger')
+            return redirect(url_for('register'))
+        
+        new_user = User(
+            firstName = form.firstName.data,
+            lastName = form.lastName.data,
+            email = form.email.data,
+            password = form.password.data,
+            role = role,
+            is_verified = False
+        )
+        db.session.add(new_user)
+        db.session.commit()
 
-            return redirect(url_for('get_login'))
-        else: # if the user already exists
-            # flash a warning message and redirect to get registration form
-            flash('There is already an account with that email address')
-            return redirect(url_for('get_register'))
+        #send verification email
+
+        send_verification_email(new_user)
+
+        flash('Registration successful! Please check your email to verify your account.', 'success')
+        return redirect(url_for('get_login'))
+
     else: # if the form was invalid
         # flash error messages and redirect to get registration form again
         for field, error in form.errors.items():
-            flash(f"{field}: {error}")
+            flash(f"{field}: {error}", 'danger')
         return redirect(url_for('get_register'))
+
+@app.route('/confirm/<token>')
+def confirm_email(token):
+    email = confirm_token(token)
+    if not email:
+        flash('The confirmation link is invalid or has expired.', 'danger')
+        return redirect(url_for('index'))
+    
+    user = User.query.filter_by(email=email).first_or_404()
+    if user.is_verified:
+        flash('Account already confirmed. Please log in.', 'success')
+    else:
+        user.is_verified = True
+        db.session.commit()
+        flash('You have confirmed your account. Thank you!', 'success')
+    return redirect(url_for('get_login'))
 
 @app.get('/login/')
 def get_login():
@@ -240,19 +300,22 @@ def post_login():
     form = LoginForm()
     if form.validate():
         user = User.query.filter_by(email=form.email.data).first()
-        if user is not None and user.verify_password(form.password.data):
+        if user and user.verify_password(form.password.data):
+            if not user.is_verified:
+                flash('Please confirm your email address to log in.', 'warning')
+                return redirect(url_for('get_login'))
+            
             login_user(user)
-            next = request.args.get('next')
-            if next is None or not next.startswith('/'):
-                next = url_for('index')
-            return redirect(next)
-        else: 
-            flash('Invalid email address or password')
+            next_page = request.args.get('next')
+            return redirect(next_page or url_for('index'))
+        else:
+            flash('Invalid email address or password.', 'danger')
             return redirect(url_for('get_login'))
-    else: 
+    else:
         for field, error in form.errors.items():
-            flash(f"{field}: {error}")
+            flash(f"{field}: {error}", 'danger')
         return redirect(url_for('get_login'))
+
 
 @app.get('/')
 def index():
