@@ -161,7 +161,7 @@ class Reported(db.Model):
 
 # remember that all database operations must occur within an app context
 with app.app_context():
-    db.drop_all()
+    # db.drop_all()
     db.create_all() # this is only needed if the database doesn't already exist
 
 
@@ -356,7 +356,7 @@ def post_add_event():
 
             file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
             file.save(file_path)
-            relative_path = os.path.join('uploads', filename)
+            relative_path = os.path.join('uploads', filename).replace(os.sep, '/')
             new_event = Event(name=form.name.data, 
                               groupName=form.groupName.data,
                               description=form.description.data, 
@@ -424,9 +424,9 @@ def report_event(event_id):
 def get_reported():
     events = Event.query.all()
     form = EventForm()
-    for event in events:
-        if event.logo:
-            event.logo_base64 = base64.b64encode(event.logo).decode('utf-8')
+    # for event in events:
+    #     if event.logo:
+            # event.logo_base64 = base64.b64encode(event.logo).decode('utf-8')
     return render_template('reportedContent.html', form=form, events=events)
 
 #deleting an event
@@ -442,5 +442,24 @@ def delete_event(event_id):
     db.session.commit()
     flash('Deleted Event')
     return redirect(url_for('get_reported'))
+
+#Events I've RSVPd To
+# @app.get('/rsvp_events/')
+# def rsvp_events():
+#     #events = Event.query.all()
+#     events = Event.query.where(id=RegisteredUser.eventId, current_user.id=RegisteredUser.userID)
+#     for event in events:
+#         print(event.name)
+    #return render_template('calendarvew.html', current_user=current_user, events=events)
+
+# #View Calendar
+# @app.get('/calendar/')
+# @login_required()
+# def calendar_view():
+#     events = Event.query.all()
+#     if current_user.is_authenticated:
+#         return render_template('calendarview.html', current_user=current_user, events=events)
+#     else:
+#         return redirect(url_for('/'))
 
 

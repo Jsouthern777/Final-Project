@@ -39,7 +39,7 @@
           {%else%}
             <p>No date and time specified.</p>
           {% endif %}
-          <p>Description: {{event.description}}</p>
+          <!-- <p>Description: {{event.description}}</p> -->
 
           {% set user_rsvp = event.registrations | selectattr('userID', 'eq', current_user.id) | list %}
             {% if user_rsvp %}
@@ -60,7 +60,10 @@
                 </form>
         {% else %}
             <form action="{{ url_for('report_event', event_id=event.id) }}" method="post">
-            <button type="submit">Report</button>
+              <div class="button-margin">
+                <button type="submit">Report</button>
+              </div>
+            
             </form>
         {% endif %}
       </div>
@@ -75,6 +78,8 @@
         {% if current_user.is_editor() or current_user.is_admin() %}
         <a href="/add_event" class="menu-button"> Add Event </a>
         {% endif %}
+        <a href="/calendar" class="menu-button"> Calendar View </a>
+        <a href="/rsvp_events" class="menu-button"> My Events </a>
         {% if current_user.is_authenticated and current_user.is_admin() %}
         <a href="/report_event" class="menu-button"> Reported Events </a>
         {% endif %}

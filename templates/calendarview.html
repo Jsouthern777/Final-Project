@@ -1,0 +1,62 @@
+<!-- this will be a calander table with a link to each event on the schedule, will input a div everytime new event is created -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/styles/style.css">
+    <title>Calendar View</title>
+</head>
+<body>
+  <header>
+    <div class="container">
+      {% for msg in get_flashed_messages() %}
+        <div class="alert alert-warning alert-dismissible fade show w-50 mx-auto" role="alert">
+          {{msg}}
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      {% endfor %}
+    </div>
+  </header>
+  <main>
+    <form method="post" enctype="multipart/form-data">
+      {{ form.hidden_tag() }}
+
+      <h1> Add a new event: </h1>
+      <div class="question-container">
+        <div class="question">{{ form.name.label }}</div>
+        <br> 
+        <div class="field">{{ form.name() }}</div>
+        <br><br>
+      </div>
+      <div class="question-container">
+        <div class="question">{{ form.groupName.label }}</div>
+        <br>
+        <div class="field">{{ form.groupName() }}</div>
+        <br><br>
+      </div>
+      <div class="question-container">
+        <div class="question">{{ form.description.label }}</div>
+        <br>
+        <div class="field">{{ form.description() }}</div>
+        <br><br>
+      </div>
+      <div class="question-container">
+        <div class="question">{{ form.logo.label }}</div>
+        <br>
+        <div class="field">{{ form.logo() }}</div>
+        <br><br>
+      </div>
+      <div class="question-container">
+        <div class="question">{{ form.dateTime.label }}</div>
+        <br>
+        <div class="field">{{ form.dateTime() }}</div>
+        <br><br>
+      </div>
+      {{ form.submit() }}
+      <a href="/" class="button"> Back </a>
+    </form>
+  </main> 
+</body>
+</html>

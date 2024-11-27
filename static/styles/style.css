@@ -16,6 +16,12 @@ header {
     margin: 20px auto;
 }
 
+
+h2{
+    padding-top: 1ex;
+    padding-bottom: 3ex;
+}
+
 main {
     display: flex;
     justify-content: center;
@@ -83,5 +89,12 @@ form {
     display: flex;
     justify-content: space-around;
     width: 50%;
-    margin-top: 20px;
+    margin-top: 50px;
+    margin-bottom: 125px;
+}
+
+
+
+.button-margin{
+    padding-bottom: 10ex;
 }
