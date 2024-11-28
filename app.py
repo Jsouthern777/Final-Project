@@ -161,7 +161,7 @@ class Reported(db.Model):
 
 # remember that all database operations must occur within an app context
 with app.app_context():
-    # db.drop_all()
+    #db.drop_all()
     db.create_all() # this is only needed if the database doesn't already exist
 
 
@@ -453,13 +453,19 @@ def delete_event(event_id):
     #return render_template('calendarvew.html', current_user=current_user, events=events)
 
 # #View Calendar
-# @app.get('/calendar/')
-# @login_required()
-# def calendar_view():
-#     events = Event.query.all()
-#     if current_user.is_authenticated:
-#         return render_template('calendarview.html', current_user=current_user, events=events)
-#     else:
-#         return redirect(url_for('/'))
+@app.get('/calendar/')
+@login_required()
+def calendar_view():
+    events = Event.query.all()
+    # date = Date()
+    # month = date.getMonth()
+    if current_user.is_authenticated:
+        return render_template('calendarview.html', month=month, events=events)
+    else:
+        return redirect(url_for('/'))
+    
+# @app.get('previous_month')
+# def previous_month():
+
 
 
