@@ -2,42 +2,44 @@
 <html lang="en">
 <head>
   <title> Calendar View </title>
-  <link rel="stylesheet" href="/static/styles/basic_table.css">
+ 
   <link rel="stylesheet" href="/static/styles/style.css">
   <script src="/static/scripts/calendar.js"></script>
-  <!-- define a dummy fake favicon to avoid errors -->
   <link rel="icon" href="data:;base64,iVBORw0KGgo=">
 </head>
 <body>
   <main>
     <h1>2023 Calendar</h1>
     <div class="section">
-    <h2 class="month">
-        <form action="{{ url_for('previous_month') }}" method="post">
-            <button type="submit">Previous Month<P/button>
-        </form>
 
-        <form action="{{ url_for('next_month') }}" method="post">
-            <button type="submit">Next Month<P/button>
-        </form>
+      <div> 
+        <h2 id="month-name" class="month">
 
-    </h2>
-      <table id="date-table">
-        <thead>
-          <tr>
-            <th>Monday</th>
-            <th>Tuesday</th>
-            <th>Wednesday</th>
-            <th>Thursday</th>
-            <th>Friday</th>
-            <th>Saturday</th>
-            <th>Sunnday</th>
-          </tr>
-        </thead>
-        <tbody>
-          <!-- body will be filled with JavaScript -->
-        </tbody>
-      </table>
+        </h2>
+      </div>
+
+      <div class="month-container">
+          <button class="month-button" id="previous-month">Previous Month<P/button>
+          <button class="month-button" id="next-month">Next Month<P/button>
+      </div>
+      <div>
+        <table id="date-table">
+          <thead>
+            <tr>
+              <th>Sunday</th>
+              <th>Monday</th>
+              <th>Tuesday</th>
+              <th>Wednesday</th>
+              <th>Thursday</th>
+              <th>Friday</th>
+              <th>Saturday</th>
+            </tr>
+          </thead>
+          <tbody id="date-table-contents">
+            <!-- body will be filled with JavaScript -->
+          </tbody>
+        </table>
+      </div>
     </div>
 
     <div class="menu-container">

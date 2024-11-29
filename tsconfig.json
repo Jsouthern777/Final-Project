@@ -5,7 +5,10 @@
       "noImplicitAny": true,
       "removeComments": true,
       "preserveConstEnums": true,
-      "sourceMap": false
+      "sourceMap": false,
+      "lib": [
+            "es5", "es6", "dom", "dom.iterable"
+        ]
     },
     "compileOnSave": true,
     "include": [

@@ -15,7 +15,8 @@ python -m pip install --upgrade email-validator
 ###############################################################################
 from __future__ import annotations
 import os
-from flask import Flask, render_template, url_for, redirect, current_app
+from typing import List
+from flask import Flask, jsonify, render_template, url_for, redirect, current_app
 from flask import request, session, flash
 from flask import url_for
 from flask_mail import Message
@@ -140,6 +141,19 @@ class Event(db.Model):
     numRSVP = db.Column(db.Integer, nullable=True)
     numReports = db.Column(db.Integer, nullable=True)
     dateTime = db.Column(db.DateTime, nullable=True)
+    
+    def to_dict(self):
+         return {
+            "id": self.id,
+            "name": self.name,
+            "groupName": self.groupName,
+            "description": self.description,
+            "logo": self.logo,
+            "numRSVP": self.numRSVP,
+            "numReports": self.numReports,
+            "dateTime": self.dateTime.isoformat() if self.dateTime else None
+        }
+    
 
 class RegisteredUser(db.Model):
     __tablename__ = 'RegisteredUsers'
@@ -457,12 +471,26 @@ def delete_event(event_id):
 @login_required()
 def calendar_view():
     events = Event.query.all()
+    event_data = [event.to_dict() for event in events]
+    print(event_data)
     # date = Date()
     # month = date.getMonth()
     if current_user.is_authenticated:
-        return render_template('calendarview.html', month=month, events=events)
+        return render_template('calendarview.html', events=event_data)
     else:
         return redirect(url_for('/'))
+    
+@app.route('/api/v1/events/<int:month>/', methods=['GET'])
+def get_events(month):
+    events = Event.query.all() #filter(Event.dateTime.month == month).all()
+    thisMonthEvents: List[Event] = []
+    for event in events:
+        if (event.dateTime.month == (month+1)):
+            thisMonthEvents.append(event)
+   
+    events_data = [event.to_dict() for event in thisMonthEvents]
+    # return jsonify(event)
+    return jsonify(events_data)
     
 # @app.get('previous_month')
 # def previous_month():

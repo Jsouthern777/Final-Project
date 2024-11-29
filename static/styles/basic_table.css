@@ -25,3 +25,7 @@ table, th, td {
 th, td {
     padding: 0.5em;
 }
+
+form{
+    padding: 0.5em;
+}

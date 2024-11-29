@@ -98,3 +98,41 @@ form {
 .button-margin{
     padding-bottom: 10ex;
 }
+
+.date-table, th, td {
+    border-style: solid;
+    border-color: black;
+    border-width: 1px;
+    border-collapse: collapse;
+}
+
+
+.month-container {
+    display: flex;
+    justify-content: space-around;
+    width: 90%;
+    margin-top: 25px;
+    margin-bottom: 25px; /* Adjust width as needed */
+    margin: 20px auto;
+    /* margin: 20px 0; Optional: adds spacing around buttons */
+}
+
+.month-button {
+    padding: 3px 3px;
+    font-size: 14px;
+    color: black;
+    background-color: #e9e9ed;
+    border: 1px solid #8f8f9d;
+    cursor: pointer;
+    text-decoration: none;  
+}
+
+    /* padding: 10px 20px;
+    margin: 0; /* Ensures no extra spacing is added */
+    /* font-size: 14px; Adjust as needed
+} */
+.month{
+    width: 100%;
+    text-align: center;
+}
+
