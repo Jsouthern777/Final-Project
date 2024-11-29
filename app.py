@@ -9,14 +9,14 @@ python -m pip install --upgrade flask-wtf
 python -m pip install --upgrade email-validator
 """
 # password sexyandsportyreagan
-
+#API key: AIzaSyDnzLW-vCMT7fVaDr6Rc61s0e04zNWBTBc
 ###############################################################################
 # Imports
 ###############################################################################
 from __future__ import annotations
 import os
 from flask import Flask, render_template, url_for, redirect, current_app
-from flask import request, session, flash
+from flask import request, session, flash, jsonify
 from flask import url_for
 from flask_mail import Message
 from flask_sqlalchemy import SQLAlchemy
@@ -140,6 +140,8 @@ class Event(db.Model):
     numRSVP = db.Column(db.Integer, nullable=True)
     numReports = db.Column(db.Integer, nullable=True)
     dateTime = db.Column(db.DateTime, nullable=True)
+    latitude = db.Column(db.Float, nullable=True) 
+    longitude = db.Column(db.Float, nullable=True)
 
 class RegisteredUser(db.Model):
     __tablename__ = 'RegisteredUsers'
@@ -161,7 +163,6 @@ class Reported(db.Model):
 
 # remember that all database operations must occur within an app context
 with app.app_context():
-    #db.drop_all()
     db.create_all() # this is only needed if the database doesn't already exist
 
 
@@ -320,9 +321,10 @@ def post_login():
 @app.get('/')
 def index():
     events = Event.query.all()
+    eventJson = jsonify(events)
     if current_user.is_authenticated:
         print(current_user.is_admin())
-        return render_template('home.html', current_user=current_user, events=events)
+        return render_template('home.html', current_user=current_user, events=events, eventJson=eventJson)
     else:
         return redirect(url_for('get_login'))
     
@@ -361,6 +363,8 @@ def post_add_event():
                               groupName=form.groupName.data,
                               description=form.description.data, 
                               logo=relative_path, 
+                              latitude=form.latitude.data,
+                              longitude=form.longitude.data,
                               dateTime=form.dateTime.data)
             db.session.add(new_event)
             db.session.commit()
