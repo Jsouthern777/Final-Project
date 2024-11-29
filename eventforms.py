@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import DateTimeField
-from wtforms.fields import PasswordField, SubmitField, EmailField, SelectField, FileField, StringField
+from wtforms.fields import PasswordField, SubmitField, EmailField, SelectField, FileField, StringField, FloatField
 from wtforms.validators import InputRequired, Email, EqualTo, Length, Optional
 from wtforms.widgets import DateTimeLocalInput
 from enum import Enum
@@ -10,8 +10,11 @@ class EventForm(FlaskForm):
     name = StringField("Event name: ", validators=[InputRequired()])
     groupName = StringField("Group name: ", validators=[InputRequired()])
     description = StringField("Event description", validators=[InputRequired()])
-    logo = FileField("Upload Event Logo: ")
-    submit = SubmitField("Add Event: ")
+    logo = FileField("Upload Event Logo: ", validators=[Optional()])
+    latitude = FloatField("Latitude: ", validators=[Optional()])
+    longitude = FloatField("Longitude: ", validators=[Optional()])
     dateTime = DateTimeField("Date:  ", validators=[Optional()], widget=DateTimeLocalInput(), format='%Y-%m-%dT%H:%M' )
+    submit = SubmitField("Add Event: ")
+
 
 
