@@ -145,7 +145,9 @@ async function fillMonth(startDay: number, numDays: number, month: number) {
     const holidaysPromise: Promise<HolidaysAPI.HolidayList> = getHolidays(month);
 
     const events = await eventsPromise;
+    console.log(events)
     const holidays = await holidaysPromise;
+    console.log(holidays)
 
     const dateTable = <HTMLTableElement> document.getElementById("date-table-contents");
     dateTable.innerHTML = "";
@@ -182,9 +184,10 @@ async function fillMonth(startDay: number, numDays: number, month: number) {
 
                 if (holidays) {
                     console.log("Checking for holidays on day:", day);
+                    console.log(holidays)
                     checkForHoliday(day, cell, holidays);
                 }else {
-                    console.log("Error: No events found");
+                    console.log("Error: No holidays found");
                 }
 
                 day+=1
@@ -208,7 +211,7 @@ function checkForEvent(day: number, element: HTMLElement, events: EventsAPI.Even
 
 
 function checkForHoliday(day: number, element: HTMLElement, holidays: HolidaysAPI.HolidayList): void{
-    for (const holiday of holidays) {
+    for (const holiday of holidays.holidays) {
         const eventDate = new Date(holiday.date); 
         if (eventDate.getDate() === day) {
             element.innerText += ` ${holiday.name}`; 
