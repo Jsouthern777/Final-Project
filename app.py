@@ -495,8 +495,6 @@ def get_events(month):
     # return jsonify(event)
     return jsonify(events_data)
     
-# @app.get('previous_month')
-# def previous_month():
 
 
 
