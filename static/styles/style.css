@@ -99,11 +99,24 @@ form {
     padding-bottom: 10ex;
 }
 
-.date-table, th, td {
+.date-table, th {
     border-style: solid;
     border-color: black;
     border-width: 1px;
     border-collapse: collapse;
+}
+
+td{
+        width: 150px; /* Set a fixed width */
+        height: 150px; /* Set a fixed height to match width */
+        text-align: center; /* Center text horizontally */
+        vertical-align: middle; /* Center text vertically */
+        border: 1px solid #ccc; /* Optional: Add a border */
+        background-color: #f9f9f9; /* Optional: Add a background color */
+        border-style: solid;
+        border-color: black;
+        border-width: 1px;
+        border-collapse: collapse;
 }
 
 
