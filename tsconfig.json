@@ -1,17 +1,21 @@
 {
     "compilerOptions": {
-      "module": "ESNext",
-      "target": "ES6",
+      "module": "esnext",
+      "target": "esnext",
       "noImplicitAny": true,
       "removeComments": true,
       "preserveConstEnums": true,
       "sourceMap": false,
+      "moduleResolution": "node", 
+      "strict": true, 
+      "esModuleInterop": true, 
+      "skipLibCheck": true,
       "lib": [
-            "es5", "es6", "dom", "dom.iterable"
+            "es5", "es6", "dom", "dom.iterable", "esnext"
         ]
     },
     "compileOnSave": true,
     "include": [
-      "static/scripts/*.ts"
+      "static/scripts/**/*.ts"
     ]
 }

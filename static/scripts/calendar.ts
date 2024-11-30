@@ -11,7 +11,7 @@ namespace HolidaysAPI {
         weekday: [Obj];
     }
     export interface Obj {
-        name: string
+        name: string 
         numeric: string
     }
     export interface observed extends Obj{
@@ -24,6 +24,7 @@ namespace HolidaysAPI {
     export interface HolidayList {
         success: boolean;
         data: undefined | { holidays: Array<Holiday>; };
+        [Symbol.iterator](): Iterator<Holiday>;
     }
 
     // definees a 'subclass' of HTMLDivElement which allows it to store a meme
@@ -51,22 +52,32 @@ namespace EventsAPI{
     }
     export interface EventList {
         events: Array<Event>;
+        [Symbol.iterator](): Iterator<Event>;
     }
 }
 
 
 document.addEventListener("DOMContentLoaded", async () => {
-    const currentDate = new Date()
-    const month = currentDate.getMonth()
-    setMonth(month)
-    
-    const previousButton = document.getElementById("previous-month");
-    previousButton.addEventListener("click", backMonth)
+    const currentDate = new Date();
+    const month = currentDate.getMonth();
+    setMonth(month);
 
+    const previousButton = document.getElementById("previous-month");
     const nextButton = document.getElementById("next-month");
-    nextButton.addEventListener("click", nextMonth)
-   
+    
+    if (previousButton) {
+        previousButton.addEventListener("click", backMonth);
+    } else {
+        console.error("Previous button not found");
+    }
+
+    if (nextButton) {
+        nextButton.addEventListener("click", nextMonth);
+    } else {
+        console.error("Next button not found");
+    }
 });
+
 
 
 async function getHolidays(month: number): Promise<HolidaysAPI.HolidayList> {
@@ -112,15 +123,21 @@ function nextMonth(){
 
 
 function setMonth(month: number) {
-    HolidaysAPI.currentMonth = month
-    const monthDiv = document.getElementById("month-name")
-    monthDiv.innerText = HolidaysAPI.months[month]
+    HolidaysAPI.currentMonth = month;
+    const monthDiv = document.getElementById("month-name");
 
-    const startDay = HolidaysAPI.monthStartDays[month]
-    const numDays = HolidaysAPI.numDays[month]
+    if (monthDiv) {
+        monthDiv.innerText = HolidaysAPI.months[month];
+    } else {
+        console.error("Month name div not found");
+    }
 
-    fillMonth(startDay, numDays, month)
+    const startDay = HolidaysAPI.monthStartDays[month];
+    const numDays = HolidaysAPI.numDays[month];
+
+    fillMonth(startDay, numDays, month);
 }
+
 
 
 async function fillMonth(startDay: number, numDays: number, month: number) {
@@ -191,7 +208,7 @@ function checkForEvent(day: number, element: HTMLElement, events: EventsAPI.Even
 
 
 function checkForHoliday(day: number, element: HTMLElement, holidays: HolidaysAPI.HolidayList): void{
-    for (const holiday of holidays.holidays) {
+    for (const holiday of holidays) {
         const eventDate = new Date(holiday.date); 
         if (eventDate.getDate() === day) {
             element.innerText += ` ${holiday.name}`; 

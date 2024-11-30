@@ -335,10 +335,9 @@ def post_login():
 @app.get('/')
 def index():
     events = Event.query.all()
-    eventJson = jsonify(events)
     if current_user.is_authenticated:
         print(current_user.is_admin())
-        return render_template('home.html', current_user=current_user, events=events, eventJson=eventJson)
+        return render_template('home.html', current_user=current_user, events=events)
     else:
         return redirect(url_for('get_login'))
     

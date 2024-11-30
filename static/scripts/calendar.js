@@ -1,12 +1,4 @@
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
+"use strict";
 var HolidaysAPI;
 (function (HolidaysAPI) {
     HolidaysAPI.currentMeme = null;
@@ -20,37 +12,43 @@ var EventsAPI;
 (function (EventsAPI) {
     EventsAPI.baseURL = '/api/v1/events';
 })(EventsAPI || (EventsAPI = {}));
-document.addEventListener("DOMContentLoaded", () => __awaiter(this, void 0, void 0, function* () {
+document.addEventListener("DOMContentLoaded", async () => {
     const currentDate = new Date();
     const month = currentDate.getMonth();
     setMonth(month);
     const previousButton = document.getElementById("previous-month");
-    previousButton.addEventListener("click", backMonth);
     const nextButton = document.getElementById("next-month");
-    nextButton.addEventListener("click", nextMonth);
-}));
-function getHolidays(month) {
-    return __awaiter(this, void 0, void 0, function* () {
-        const url = `${HolidaysAPI.baseURL}/v1/holidays`;
-        const params = new URLSearchParams({
-            country: "US",
-            year: "2023",
-            month: `${month + 1}`,
-            pretty: "true",
-            key: "bac573e4-8382-420b-8953-b809ce98d3bf",
-        });
-        const response = yield fetch(`${url}?${params.toString()}`);
-        const holidays = (yield validateJSON(response));
-        return holidays;
+    if (previousButton) {
+        previousButton.addEventListener("click", backMonth);
+    }
+    else {
+        console.error("Previous button not found");
+    }
+    if (nextButton) {
+        nextButton.addEventListener("click", nextMonth);
+    }
+    else {
+        console.error("Next button not found");
+    }
+});
+async function getHolidays(month) {
+    const url = `${HolidaysAPI.baseURL}/v1/holidays`;
+    const params = new URLSearchParams({
+        country: "US",
+        year: "2023",
+        month: `${month + 1}`,
+        pretty: "true",
+        key: "bac573e4-8382-420b-8953-b809ce98d3bf",
     });
+    const response = await fetch(`${url}?${params.toString()}`);
+    const holidays = (await validateJSON(response));
+    return holidays;
 }
-function getEvents(month) {
-    return __awaiter(this, void 0, void 0, function* () {
-        const url = `${EventsAPI.baseURL}/${month}`;
-        const response = yield fetch(`${url}`);
-        const events = (yield validateJSON(response));
-        return events;
-    });
+async function getEvents(month) {
+    const url = `${EventsAPI.baseURL}/${month}`;
+    const response = await fetch(`${url}`);
+    const events = (await validateJSON(response));
+    return events;
 }
 function backMonth() {
     let month = HolidaysAPI.currentMonth;
@@ -69,57 +67,60 @@ function nextMonth() {
 function setMonth(month) {
     HolidaysAPI.currentMonth = month;
     const monthDiv = document.getElementById("month-name");
-    monthDiv.innerText = HolidaysAPI.months[month];
+    if (monthDiv) {
+        monthDiv.innerText = HolidaysAPI.months[month];
+    }
+    else {
+        console.error("Month name div not found");
+    }
     const startDay = HolidaysAPI.monthStartDays[month];
     const numDays = HolidaysAPI.numDays[month];
     fillMonth(startDay, numDays, month);
 }
-function fillMonth(startDay, numDays, month) {
-    return __awaiter(this, void 0, void 0, function* () {
-        const eventsPromise = getEvents(month);
-        const holidaysPromise = getHolidays(month);
-        const events = yield eventsPromise;
-        const holidays = yield holidaysPromise;
-        const dateTable = document.getElementById("date-table-contents");
-        dateTable.innerHTML = "";
-        let day = 1;
-        let monthFilled = false;
-        for (let week = 1; week <= 6; week++) {
-            if (monthFilled) {
-                continue;
+async function fillMonth(startDay, numDays, month) {
+    const eventsPromise = getEvents(month);
+    const holidaysPromise = getHolidays(month);
+    const events = await eventsPromise;
+    const holidays = await holidaysPromise;
+    const dateTable = document.getElementById("date-table-contents");
+    dateTable.innerHTML = "";
+    let day = 1;
+    let monthFilled = false;
+    for (let week = 1; week <= 6; week++) {
+        if (monthFilled) {
+            continue;
+        }
+        const row = dateTable.insertRow();
+        for (let i = 1; i <= 7; i++) {
+            const cell = row.insertCell();
+            if (week == 1 && i < startDay) {
+                cell.innerText = "    ";
             }
-            const row = dateTable.insertRow();
-            for (let i = 1; i <= 7; i++) {
-                const cell = row.insertCell();
-                if (week == 1 && i < startDay) {
-                    cell.innerText = "    ";
-                }
-                else if (day > numDays) {
-                    cell.innerText = "    ";
+            else if (day > numDays) {
+                cell.innerText = "    ";
+            }
+            else {
+                cell.innerText = day.toString();
+                if (events) {
+                    checkForEvent(day, cell, events);
                 }
                 else {
-                    cell.innerText = day.toString();
-                    if (events) {
-                        checkForEvent(day, cell, events);
-                    }
-                    else {
-                        console.log("Error: No events found");
-                    }
-                    if (holidays) {
-                        console.log("Checking for holidays on day:", day);
-                        checkForHoliday(day, cell, holidays);
-                    }
-                    else {
-                        console.log("Error: No events found");
-                    }
-                    day += 1;
-                    if (day > numDays) {
-                        monthFilled = true;
-                    }
+                    console.log("Error: No events found");
+                }
+                if (holidays) {
+                    console.log("Checking for holidays on day:", day);
+                    checkForHoliday(day, cell, holidays);
+                }
+                else {
+                    console.log("Error: No events found");
+                }
+                day += 1;
+                if (day > numDays) {
+                    monthFilled = true;
                 }
             }
         }
-    });
+    }
 }
 function checkForEvent(day, element, events) {
     for (const event of events) {
@@ -131,7 +132,7 @@ function checkForEvent(day, element, events) {
     }
 }
 function checkForHoliday(day, element, holidays) {
-    for (const holiday of holidays.holidays) {
+    for (const holiday of holidays) {
         const eventDate = new Date(holiday.date);
         if (eventDate.getDate() === day) {
             element.innerText += ` ${holiday.name}`;
@@ -139,13 +140,11 @@ function checkForHoliday(day, element, holidays) {
         }
     }
 }
-function validateJSON(response) {
-    return __awaiter(this, void 0, void 0, function* () {
-        if (response.ok) {
-            return response.json();
-        }
-        else {
-            return Promise.reject(response);
-        }
-    });
+async function validateJSON(response) {
+    if (response.ok) {
+        return response.json();
+    }
+    else {
+        return Promise.reject(response);
+    }
 }

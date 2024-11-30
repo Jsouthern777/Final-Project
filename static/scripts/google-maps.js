@@ -1,22 +1,22 @@
-function initMapForEvent(eventId, latitude, longitude, eventName) {
-    const eventLocation = { lat: latitude, lng: longitude };
-    const map = new google.maps.Map(document.getElementById(`map-container-${eventId}`), {
-        center: eventLocation,
-        zoom: 12,
-    });
-    const marker = new google.maps.Marker({
-        position: eventLocation,
-        map: map,
-        title: eventName,
-    });
-}
-window.initializeEventMaps = function (events) {
-    if (!events || events.length === 0) {
-        console.error("No events data available.");
-        return;
+let map;
+export async function initMap(lat, lng, elementId) {
+    const element = document.getElementById(elementId);
+    if (element) {
+        const { Map } = await google.maps.importLibrary("maps");
+        const { AdvancedMarkerElement } = await google.maps.importLibrary("marker");
+        const eventLocation = { lat: lat, lng: lng };
+        map = new Map(element, {
+            zoom: 15,
+            center: eventLocation
+        });
+        const marker = new google.maps.Marker({
+            position: eventLocation,
+            map: map,
+        });
     }
-    events.forEach(event => {
-        initMapForEvent(event.id, event.latitude, event.longitude, event.name);
-    });
-};
-export {};
+    else {
+        console.error(`Element with ID ${elementId} not found.`);
+    }
+}
+
+window.initMap = initMap;
