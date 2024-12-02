@@ -29,6 +29,7 @@ from eventforms import EventForm
 from werkzeug.utils import secure_filename
 from itsdangerous import URLSafeTimedSerializer
 import base64
+import pdb
 
 # Import from local package files
 from hashing_examples import UpdatedHasher
@@ -223,6 +224,9 @@ def confirm_token(token, expiration=3600):
 ################################################################################
 
 def send_verification_email(user):
+
+    
+    #pdb.set_trace()  #(for debugging)
     token = generate_confirmation_token(user.email)
     confirm_url = url_for('confirm_email', token=token, _external=True)
     html = f"""
@@ -263,7 +267,7 @@ def post_register():
         existing_user = User.query.filter_by(email=form.email.data).first()
         if existing_user:
             flash('An account with this email address already exists', 'danger')
-            return redirect(url_for('register'))
+            return redirect(url_for('get_register'))
         
         new_user = User(
             firstName = form.firstName.data,
@@ -287,6 +291,7 @@ def post_register():
         # flash error messages and redirect to get registration form again
         for field, error in form.errors.items():
             flash(f"{field}: {error}", 'danger')
+
         return redirect(url_for('get_register'))
 
 @app.route('/confirm/<token>')
