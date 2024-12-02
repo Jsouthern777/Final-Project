@@ -211,7 +211,7 @@ function checkForEvent(day: number, element: HTMLElement, events: EventsAPI.Even
 
 
 function checkForHoliday(day: number, element: HTMLElement, holidays: HolidaysAPI.HolidayList): void{
-    for (const holiday of holidays.holidays) {
+    for (const holiday of holidays) {
         const eventDate = new Date(holiday.date); 
         if (eventDate.getDate() === day) {
             element.innerText += ` ${holiday.name}`; 

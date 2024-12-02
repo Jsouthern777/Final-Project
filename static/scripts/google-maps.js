@@ -6,17 +6,15 @@ export async function initMap(lat, lng, elementId) {
         const { AdvancedMarkerElement } = await google.maps.importLibrary("marker");
         const eventLocation = { lat: lat, lng: lng };
         map = new Map(element, {
-            zoom: 15,
+            zoom: 8,
             center: eventLocation
         });
-        const marker = new google.maps.Marker({
+        const marker = new AdvancedMarkerElement({
             position: eventLocation,
-            map: map,
+            map: map
         });
     }
     else {
         console.error(`Element with ID ${elementId} not found.`);
     }
 }
-
-window.initMap = initMap;

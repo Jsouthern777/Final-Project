@@ -81,7 +81,9 @@ async function fillMonth(startDay, numDays, month) {
     const eventsPromise = getEvents(month);
     const holidaysPromise = getHolidays(month);
     const events = await eventsPromise;
+    console.log(events);
     const holidays = await holidaysPromise;
+    console.log(holidays);
     const dateTable = document.getElementById("date-table-contents");
     dateTable.innerHTML = "";
     let day = 1;
@@ -109,10 +111,11 @@ async function fillMonth(startDay, numDays, month) {
                 }
                 if (holidays) {
                     console.log("Checking for holidays on day:", day);
+                    console.log(holidays);
                     checkForHoliday(day, cell, holidays);
                 }
                 else {
-                    console.log("Error: No events found");
+                    console.log("Error: No holidays found");
                 }
                 day += 1;
                 if (day > numDays) {
