@@ -22,6 +22,7 @@ namespace HolidaysAPI {
     }
 
     export interface HolidayList {
+        holidays: any;
         success: boolean;
         data: undefined | { holidays: Array<Holiday>; };
         [Symbol.iterator](): Iterator<Holiday>;
@@ -33,7 +34,7 @@ namespace HolidaysAPI {
     }
 
     export const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
-    export const monthStartDays = [0, 3, 3, 6, 1, 4, 6, 2, 5, 0, 3, 5]
+    export const monthStartDays = [1, 4, 4, 7, 2, 5, 7, 3, 6, 1, 4, 6]
     export const numDays = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
     export let currentMonth = 1;
 }
@@ -77,7 +78,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         console.error("Next button not found");
     }
 });
-
 
 
 async function getHolidays(month: number): Promise<HolidaysAPI.HolidayList> {
@@ -202,7 +202,7 @@ async function fillMonth(startDay: number, numDays: number, month: number) {
 function checkForEvent(day: number, element: HTMLElement, events: EventsAPI.EventList): void{
     for (const event of events) {
         const eventDate = new Date(event.dateTime); 
-        if (eventDate.getDate() === day) {
+        if (eventDate.getDate() === (day-1)) {
             element.innerText += ` - ${event.name}`; 
             element.classList.add("event-day"); 
         }
@@ -211,9 +211,9 @@ function checkForEvent(day: number, element: HTMLElement, events: EventsAPI.Even
 
 
 function checkForHoliday(day: number, element: HTMLElement, holidays: HolidaysAPI.HolidayList): void{
-    for (const holiday of holidays) {
+    for (const holiday of holidays.holidays) {
         const eventDate = new Date(holiday.date); 
-        if (eventDate.getDate() === day) {
+        if (eventDate.getDate() === (day-1)) {
             element.innerText += ` ${holiday.name}`; 
             element.classList.add("holiday-day"); 
         }
