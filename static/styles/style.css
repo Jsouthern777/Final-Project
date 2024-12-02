@@ -107,10 +107,10 @@ form {
 }
 
 td{
+    position: relative;
     width: 150px; 
     height: 150px; 
-    text-align: center; 
-    vertical-align: middle; 
+    text-align: center;
     border: 1px solid #ccc; 
     background-color: #f9f9f9; 
     border-style: solid;
@@ -118,16 +118,45 @@ td{
     border-width: 1px;
     border-collapse: collapse;
 }
+.day-text{
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    font-size: 14px;
+    font-weight: bold;
+}
+.event-day {
+    display: block; 
+    margin-top: 5px; 
+    font-family: 'Helvetica', sans-serif; 
+    font-size: 14px; 
+    font-weight: bold; 
+    color: #254a6e; 
+    text-decoration: none;
+}
+.holidays-container{
+    position: absolute;
+    bottom: 5px;
+    left: 0;
+    right: 0;
+    text-align: center;
+}
 
-
+.holiday-day {
+    display: inline-block; 
+    margin-top: 5px; 
+    font-family: 'Georgia', serif; 
+    font-size: 12px; 
+    font-style: italic; 
+    color: #5f5767; 
+}
 .month-container {
     display: flex;
     justify-content: space-around;
     width: 90%;
     margin-top: 25px;
-    margin-bottom: 25px; /* Adjust width as needed */
+    margin-bottom: 25px; 
     margin: 20px auto;
-    /* margin: 20px 0; Optional: adds spacing around buttons */
 }
 
 .month-button {
@@ -149,3 +178,15 @@ td{
     text-align: center;
 }
 
+
+/* evetn description  on more info page */
+.description{
+    width: 300px;
+}
+
+.event-btn-container {
+    display: flex;
+    justify-content: space-between; 
+    gap: 3px; 
+    align-items: center; 
+}

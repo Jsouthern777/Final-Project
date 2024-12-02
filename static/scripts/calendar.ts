@@ -44,7 +44,7 @@ namespace EventsAPI{
     export interface Event {
         dateTime: string,
         description: string | null,
-        groupname: string | null,
+        groupName: string | null,
         id: number,
         logo: string | null, 
         name: string | null,
@@ -174,14 +174,20 @@ async function fillMonth(startDay: number, numDays: number, month: number) {
             }
 
             else{
-                cell.innerText = day.toString()
+                // create day div
+                const div = document.createElement("div")
+                div.innerText = day.toString()
+                div.classList.add('day-text')
+                cell.appendChild(div)
+                
+                // cell.innerText = day.toString()
                 if (events) {
                     checkForEvent(day, cell, events);
                     
                 }else {
                     console.log("Error: No events found");
                 }
-
+                
                 if (holidays) {
                     console.log("Checking for holidays on day:", day);
                     console.log(holidays)
@@ -200,24 +206,38 @@ async function fillMonth(startDay: number, numDays: number, month: number) {
 }
 
 function checkForEvent(day: number, element: HTMLElement, events: EventsAPI.EventList): void{
+    const eventsDiv = document.createElement("div")
+    eventsDiv.classList.add("events-container")
+
     for (const event of events) {
         const eventDate = new Date(event.dateTime); 
-        if (eventDate.getDate() === (day-1)) {
-            element.innerText += ` - ${event.name}`; 
-            element.classList.add("event-day"); 
+        if (eventDate.getDate() === (day)) {
+            const aTag = document.createElement("a")
+            aTag.innerText = `${event.groupName ? event.groupName + ' - ' : ''}${event.name}`;
+            aTag.classList.add('event-day')
+            aTag.href = `/more_info/${event.id}`
+            eventsDiv.appendChild(aTag)
         }
     }
+
+    element.appendChild(eventsDiv)
 }
 
 
 function checkForHoliday(day: number, element: HTMLElement, holidays: HolidaysAPI.HolidayList): void{
+    const holidaysDiv = document.createElement("div")
+    holidaysDiv.classList.add("holidays-container")
+    
     for (const holiday of holidays.holidays) {
         const eventDate = new Date(holiday.date); 
         if (eventDate.getDate() === (day-1)) {
-            element.innerText += ` ${holiday.name}`; 
-            element.classList.add("holiday-day"); 
+            const div = document.createElement("div");
+            div.innerText = `${holiday.name}\n`;
+            div.classList.add('holiday-day');
+            holidaysDiv.appendChild(div);
         }
     }
+    element.appendChild(holidaysDiv)
 }
 
 

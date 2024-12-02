@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="/static/styles/style.css">
+  <title>More Info</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ" crossorigin="anonymous"></script>
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDnzLW-vCMT7fVaDr6Rc61s0e04zNWBTBc"></script>
+  <script type="module">
+    import { initMap } from '/static/scripts/google-maps.js';
+  </script>
+</head>
+<body>
+  <header>
+    <div class="container">
+      {% for message in get_flashed_messages() %}
+        <div class="alert alert-warning d-flex align-items-center alert-dismissible fade show">
+          <button type="button" class="close" data-bs-dismiss="alert">&times;</button>
+          {{ message }}
+        </div>
+      {% endfor %}
+    </div>
+  </header>
+  <main>
+    
+      <div>
+        <h2>Event Info</h2>
+        {% if event %}
+    
+            <div>
+              <h3>{{ event.name }}</h3>
+              <p>Group: {{ event.groupName }}</p>
+              <img src="{{ url_for('static', filename=event.logo) }}" alt="Event Logo" width="300">
+              <p class="description">Description: {{ event.description }}</p>
+              {% if event.dateTime %}
+                <p>Date and time: {{ event.dateTime }}</p>
+              {% else %}
+                <p>No date and time specified.</p>
+              {% endif %}
+
+              <div id="map-{{ event.id }}" style="height: 500px; width: 100%;"></div>
+              <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                  const lat = {{ event.latitude }};
+                  const lng = {{ event.longitude }};
+                  const mapId = 'map-{{ event.id }}';
+                  initMap(lat, lng, mapId);
+                });
+              </script>
+              
+              {% set user_rsvp = event.registrations | selectattr('userID', 'eq', current_user.id) | list %}
+              {% if user_rsvp %}
+                <p>You have RSVP’d for this event.</p>
+                <form action="{{ url_for('rsvp_event', event_id=event.id) }}" method="post">
+                  <button type="submit">Un-RSVP</button>
+                </form>
+              {% else %}
+                <form action="{{ url_for('rsvp_event', event_id=event.id) }}" method="post">
+                  <button type="submit">RSVP</button>
+                </form>
+              {% endif %}
+              
+              {% set user_report = event.reportedEvent | selectattr('userID', 'eq', current_user.id) | list %}
+              {% if user_report %}
+                <p>You have reported this event.</p>
+                <form action="{{ url_for('report_event', event_id=event.id) }}" method="post">
+                  <button type="submit">Un-report</button>
+                </form>
+              {% else %}
+                <form action="{{ url_for('report_event', event_id=event.id) }}" method="post">
+                  <div class="button-margin">
+                    <button type="submit">Report</button>
+                  </div>
+                </form>
+              {% endif %}
+            </div>
+        {% else %}
+          <p>No event found. Please add an event to see upload options.</p>
+        {% endif %}
+      </div>
+      <div class="menu-container">
+        <a href="/" class="menu-button"> Home </a>
+        <a href="/logout" class="menu-button"> Logout </a>
+        {% if current_user.is_editor() or current_user.is_admin() %}
+          <a href="/add_event" class="menu-button"> Add Event </a>
+        {% endif %}
+        <a href="/calendar" class="menu-button"> Calendar View </a>
+        <a href="{{ url_for('profile', user_id=current_user.id) }}" class="menu-button"> My Profile </a>
+        {% if current_user.is_authenticated and current_user.is_admin() %}
+          <a href="/report_event" class="menu-button"> Reported Events </a>
+        {% endif %}
+      </div>
+    
+  </main>
+</body>
+</html>
