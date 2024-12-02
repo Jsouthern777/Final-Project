@@ -29,7 +29,6 @@ from eventforms import EventForm
 from werkzeug.utils import secure_filename
 from itsdangerous import URLSafeTimedSerializer
 import base64
-import pdb
 
 # Import from local package files
 from hashing_examples import UpdatedHasher
@@ -224,9 +223,6 @@ def confirm_token(token, expiration=3600):
 ################################################################################
 
 def send_verification_email(user):
-
-    
-    #pdb.set_trace()  #(for debugging)
     token = generate_confirmation_token(user.email)
     confirm_url = url_for('confirm_email', token=token, _external=True)
     html = f"""
@@ -267,7 +263,7 @@ def post_register():
         existing_user = User.query.filter_by(email=form.email.data).first()
         if existing_user:
             flash('An account with this email address already exists', 'danger')
-            return redirect(url_for('get_register'))
+            return redirect(url_for('register'))
         
         new_user = User(
             firstName = form.firstName.data,
@@ -291,7 +287,6 @@ def post_register():
         # flash error messages and redirect to get registration form again
         for field, error in form.errors.items():
             flash(f"{field}: {error}", 'danger')
-
         return redirect(url_for('get_register'))
 
 @app.route('/confirm/<token>')
@@ -465,14 +460,6 @@ def delete_event(event_id):
     flash('Deleted Event')
     return redirect(url_for('get_reported'))
 
-#Events I've RSVPd To
-# @app.get('/rsvp_events/')
-# def rsvp_events():
-#     #events = Event.query.all()
-#     events = Event.query.where(id=RegisteredUser.eventId, current_user.id=RegisteredUser.userID)
-#     for event in events:
-#         print(event.name)
-    #return render_template('calendarvew.html', current_user=current_user, events=events)
 
 # #View Calendar
 @app.get('/calendar/')
@@ -499,7 +486,35 @@ def get_events(month):
     events_data = [event.to_dict() for event in thisMonthEvents]
     # return jsonify(event)
     return jsonify(events_data)
+
+
+# Single Events Page
+@app.get('/more_info/<int:event_id>/')
+@login_required()
+def more_info(event_id):
+    event = Event.query.get_or_404(event_id)
+    if current_user.is_authenticated:
+        return render_template('moreinfo.html', event=event)
+    else:
+        return redirect(url_for('/'))
+
+
+# Profile, which has list of events i'm RSVPed to
+@app.get('/profile/<int:user_id>/')
+@login_required()
+def profile(user_id):
+    if(current_user.id != user_id):
+        return redirect(url_for('/'))
+        
     
+    user = User.query.get_or_404(user_id)
+    role = user.role
+    registrations = RegisteredUser.query.filter_by(userID=user_id)
+    event_ids = [registration.eventID for registration in registrations]
+    events = Event.query.filter(Event.id.in_(event_ids)).all()
 
 
-
+    if current_user.is_authenticated:
+        return render_template('profile.html', user=user, events=events, role=role)
+    else:
+        return redirect(url_for('/'))
