@@ -17,5 +17,4 @@ export async function initMap(lat, lng, elementId) {
         console.error(`Element with ID ${elementId} not found.`);
     }
 }
-
-window.initMap = initMap
+window.initMap = initMap;

@@ -4,7 +4,7 @@ var HolidaysAPI;
     HolidaysAPI.currentMeme = null;
     HolidaysAPI.baseURL = "https://holidayapi.com";
     HolidaysAPI.months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-    HolidaysAPI.monthStartDays = [0, 3, 3, 6, 1, 4, 6, 2, 5, 0, 3, 5];
+    HolidaysAPI.monthStartDays = [1, 4, 4, 7, 2, 5, 7, 3, 6, 1, 4, 6];
     HolidaysAPI.numDays = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
     HolidaysAPI.currentMonth = 1;
 })(HolidaysAPI || (HolidaysAPI = {}));
@@ -102,7 +102,10 @@ async function fillMonth(startDay, numDays, month) {
                 cell.innerText = "    ";
             }
             else {
-                cell.innerText = day.toString();
+                const div = document.createElement("div");
+                div.innerText = day.toString();
+                div.classList.add('day-text');
+                cell.appendChild(div);
                 if (events) {
                     checkForEvent(day, cell, events);
                 }
@@ -126,22 +129,33 @@ async function fillMonth(startDay, numDays, month) {
     }
 }
 function checkForEvent(day, element, events) {
+    const eventsDiv = document.createElement("div");
+    eventsDiv.classList.add("events-container");
     for (const event of events) {
         const eventDate = new Date(event.dateTime);
-        if (eventDate.getDate() === day) {
-            element.innerText += ` - ${event.name}`;
-            element.classList.add("event-day");
+        if (eventDate.getDate() === (day)) {
+            const aTag = document.createElement("a");
+            aTag.innerText = `${event.groupName ? event.groupName + ' - ' : ''}${event.name}`;
+            aTag.classList.add('event-day');
+            aTag.href = `/more_info/${event.id}`;
+            eventsDiv.appendChild(aTag);
         }
     }
+    element.appendChild(eventsDiv);
 }
 function checkForHoliday(day, element, holidays) {
-    for (const holiday of holidays) {
+    const holidaysDiv = document.createElement("div");
+    holidaysDiv.classList.add("holidays-container");
+    for (const holiday of holidays.holidays) {
         const eventDate = new Date(holiday.date);
-        if (eventDate.getDate() === day) {
-            element.innerText += ` ${holiday.name}`;
-            element.classList.add("holiday-day");
+        if (eventDate.getDate() === (day - 1)) {
+            const div = document.createElement("div");
+            div.innerText = `${holiday.name}\n`;
+            div.classList.add('holiday-day');
+            holidaysDiv.appendChild(div);
         }
     }
+    element.appendChild(holidaysDiv);
 }
 async function validateJSON(response) {
     if (response.ok) {
