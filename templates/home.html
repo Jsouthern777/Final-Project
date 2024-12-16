@@ -9,6 +9,7 @@
 
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ" crossorigin="anonymous"></script>
+  <script src="/static/scripts/event.js"></script>
   
 </head>
 <body>
@@ -48,73 +49,22 @@
   </div>
   <main>
     {% if current_user.is_authenticated %}
-      <p>Logged in as {{ current_user.email }}</p>
+      <h1>Logged in as {{ current_user.email }}</h1>
       <div>
-        <h2>All Events</h2>
-        {% if events %}
-        <div class="event-list">
-          {% for event in events %}
-            <div class="event-card">
-              <h3>{{ event.name }}</h3>
-              <p>Group: {{ event.groupName }}</p>
-              <img src="{{ url_for('static', filename=event.logo) }}" alt="Event Logo" width="300">
-              {% if event.dateTime %}
-               <p class="event-date" data-datetime="{{ event.dateTime }}"></p>
-              {% else %}
-                <p>No date and time specified.</p>
-              {% endif %}
-              
-              <div class="event-btn-container"> 
-                <div class="event-action-btn">             
-                  <form action="{{ url_for('more_info', event_id=event.id) }}" method="get">
-                    <button type="submit">More Info</button>
-                  </form>
-                </div>    
-
-                {% set user_rsvp = event.registrations | selectattr('userID', 'eq', current_user.id) | list %}
-
-                {% if user_rsvp %}
-                  <div class="event-action-btn">
-                    <form action="{{ url_for('rsvp_event', event_id=event.id) }}" method="post">
-                      <button type="submit">Un-RSVP</button>
-                    </form>
-                    <p>You have RSVP’d.</p>
-                  </div>
-                {% else %}
-                  <div class="event-action-btn">
-                    <form action="{{ url_for('rsvp_event', event_id=event.id) }}" method="post">
-                      <button type="submit">RSVP</button>
-                    </form>
-                  </div>
-                {% endif %}
-                
-                {% set user_report = event.reportedEvent | selectattr('userID', 'eq', current_user.id) | list %}
-                {% if user_report %}
-                <div class="event-action-btn">
-                  <p>You have reported this event.</p>
-                  <form action="{{ url_for('report_event', event_id=event.id) }}" method="post">
-                    <button type="submit">Un-report</button>
-                  </form>
-                </div>
-                {% else %}
-                 <div class="event-action-btn">
-                  <form action="{{ url_for('report_event', event_id=event.id) }}" method="post">
-                    <div class="button-margin">
-                      <button type="submit">Report</button>
-                    </div>
-                  </form>
-                </div>
-                {% endif %}
-               </div>
-               
-            </div>
-          {% endfor %}
-          </div>
-        {% else %}
-          <p>No events found. Please add an event to see upload options.</p>
-        {% endif %}
+        <h2>Event List</h2>
+        <div id="events-container"></div>
       </div>
-    
+      <div class="menu-container">
+        <a href="/" class="menu-button"> Home </a>
+        <a href="/logout" class="menu-button"> Logout </a>
+        {% if current_user.is_editor() or current_user.is_admin() %}
+          <a href="/add_event" class="menu-button"> Add Event </a>
+        {% endif %}
+        <a href="/calendar" class="menu-button"> Calendar View </a>
+        <a href="{{ url_for('profile', user_id=current_user.id) }}" class="menu-button"> My Profile </a>
+        {% if current_user.is_authenticated and current_user.is_admin() %}
+          <a href="/report_event" class="menu-button"> Reported Events </a>
+        {% endif %}
       </div>
     {% else %}
       <h1>Welcome to GreekedIn! Register or Login</h1>

@@ -481,6 +481,7 @@ def calendar_view():
         return redirect(url_for('/'))
     
 @app.route('/api/v1/events/<int:month>/', methods=['GET'])
+@login_required()
 def get_events(month):
     events = Event.query.all() #filter(Event.dateTime.month == month).all()
     thisMonthEvents: List[Event] = []
@@ -523,3 +524,32 @@ def profile(user_id):
         return render_template('profile.html', user=user, events=events, role=role)
     else:
         return redirect(url_for('/'))
+    
+@app.get('/api/events/')
+@login_required()
+def get_events_all():
+    events = Event.query.all()
+    return jsonify([event.to_dict() for event in events])
+
+@app.get('/fetchuserrsvp/<int:event_id>/')
+@login_required()
+def fetch_user_rsvp(event_id):
+    event = Event.query.get_or_404(event_id)
+    rsvp = RegisteredUser.query.filter_by(eventID=event_id, userID=current_user.id).first()
+    if rsvp:
+        return jsonify({"rsvp": True, "event_id": event_id})
+    else:
+        return jsonify({"rsvp": False, "event_id": event_id})
+
+
+@app.get('/fetchuserreport/<int:event_id>/')
+@login_required()
+def fetch_user_report(event_id):
+    event = Event.query.get_or_404(event_id)
+    report = Reported.query.filter_by(eventID=event_id, userID=current_user.id).first()
+    if report:
+        return jsonify({"report": True, "event_id": event_id})
+    else:
+        return jsonify({"report": False, "event_id": event_id})
+
+

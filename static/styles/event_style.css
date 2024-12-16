@@ -1,0 +1,26 @@
+#events-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 16px;
+  margin: 20px;
+  padding: 0;
+}
+
+.event {
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 16px;
+  background-color: #f9f9f9;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.event img {
+  max-width: 100%;
+  border-radius: 4px;
+}
+
+.event-btn-container {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 16px;
+}
