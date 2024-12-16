@@ -552,4 +552,7 @@ def fetch_user_report(event_id):
     else:
         return jsonify({"report": False, "event_id": event_id})
 
-
+@app.route('/api/v1/events/<int:event_id>/rsvp_count', methods=['GET'])
+def get_rsvp_count(event_id):
+    event = Event.query.get_or_404(event_id)
+    return jsonify({"event_id": event.id, "rsvp_count": event.numRSVP or 0})

@@ -24,6 +24,28 @@ async function fetchEvents(): Promise<Event[]> {
     }
 }
 
+async function fetchRsvpCount(eventId: number): Promise<number> {
+    try {
+        const response = await fetch(`/api/v1/events/${eventId}/rsvp_count`);
+        if (!response.ok) {
+            throw new Error(`Failed to fetch RSVP count: ${response.statusText}`);
+        }
+        const data = await response.json();
+        return data.rsvp_count;
+    } catch (error) {
+        console.error("Error fetching RSVP count:", error);
+        return 0;
+    }
+}
+
+async function updateRsvpCount(eventId: number): Promise<void> {
+    const rsvpCount = await fetchRsvpCount(eventId);
+    const rsvpElement = document.getElementById(`rsvp-count-${eventId}`);
+    if (rsvpElement) {
+        rsvpElement.textContent = `${rsvpCount} people RSVPed`;
+    }
+}
+
 async function fetchUserActions(eventId: number): Promise<{ rsvpStatus: boolean; reportStatus: boolean }> {
     try {
         const [rsvpResponse, reportResponse] = await Promise.all([
@@ -61,6 +83,7 @@ function handleRsvp(event: Event): (e: MouseEvent) => void {
             if (!response.ok) {
                 console.error(`Failed to update RSVP for event ${event.id}`);
             }
+            await updateRsvpCount(event.id);
         } catch (error) {
             console.error("Error updating RSVP:", error);
         }
@@ -99,7 +122,7 @@ async function renderEvents(events: Event[]): Promise<void> {
                 ${event.logo ? `<img src="/static/${event.logo}" alt="Event Logo" width="300">` : ''}
                 <p>${event.description || 'No description available.'}</p>
                 <p>Date and time: ${event.dateTime || 'Not specified.'}</p>
-                <p>${event.numRSVP !== null ? `${event.numRSVP} people RSVPed` : 'No RSVPs yet.'}</p>
+                <p id="rsvp-count-${event.id}">${event.numRSVP !== null ? `${event.numRSVP} people RSVPed` : 'No RSVPs yet.'}</p>
                 <div class="event-btn-container">
                     <form action="/more_info/${event.id}" method="get">
                         <button type="submit">More Info</button>
