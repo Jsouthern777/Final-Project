@@ -162,7 +162,7 @@ color: black;
     flex: 2;
 }
 
-.form-button, .button {
+/* .form-button, .button {
     display: block;
     padding-top: 10px;
     padding-bottom: 10px;
@@ -185,7 +185,7 @@ color: black;
     border: 1px solid #676774;
     border-radius: 4px;
     text-decoration: none;  
-}
+} */
 
 .menu-container {
     display: flex;
@@ -292,13 +292,15 @@ td{
 }
 
 .event-btn-container button {
+    flex: 1;
     padding: 10px 15px;
     font-size: 14px;
-    border-radius: 5px;
+    border-radius: 15px;
     border: none;
     cursor: pointer;
     background-color: #007bff;
     color: white;
+    text-align: center;
     transition: background-color 0.3s;
 }
 
