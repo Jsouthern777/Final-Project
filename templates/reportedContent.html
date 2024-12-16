@@ -11,6 +11,21 @@
 </head>
 <body>
   <header>
+    <div class = "topnav">
+      <a class="navbar-brand" href="/" padding: 0>
+        <img src="/static/images/greek2.png" alt="Logo" width="77" margin="0"> 
+      </a>
+      <a class="nav-link" href="/">Home</a>
+      <a class="nav-link" href="/logout">Logout</a>
+      {% if current_user.is_editor() or current_user.is_admin() %}
+        <a class="nav-link" href="/add_event">Add Event</a>
+      {% endif %}
+      {% if current_user.is_authenticated and current_user.is_admin() %}
+          <a href="/report_event" class="nav-link"> Reported Events </a>
+      {% endif %}
+      <a class="nav-link" href="/calendar">Calendar View</a>
+      <a class="nav-link" href="{{ url_for('profile', user_id=current_user.id) }}">My Profile</a>
+    </div>
     <div class="container">
       {% for message in get_flashed_messages() %}
         <div class="alert alert-warning d-flex align-items-center alert-dismissible fade show">
@@ -23,7 +38,7 @@
     </div>
   </header>
   <main>
-      <div>
+      <div class="reported-container">
         <h2>Reported Events</h2>
         {% for event in events %}
           <div>
@@ -43,7 +58,7 @@
         {% endfor %}
       </div>
 
-      <div class="menu-container">
+      <!-- <div class="menu-container">
         <a href="/" class="menu-button"> Home </a>
         <a href="/logout" class="menu-button"> Logout </a>
         {% if current_user.is_editor() or current_user.is_admin() %}
@@ -54,7 +69,7 @@
         {% if current_user.is_authenticated and current_user.is_admin() %}
         <a href="/report_event" class="menu-button"> Reported Events </a>
         {% endif %}
-      </div>
+      </div> -->
   </main>
 </body>
 </html>

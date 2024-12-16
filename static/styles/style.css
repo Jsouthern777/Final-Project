@@ -2,8 +2,15 @@ html, body {
     height: 100%;
     margin: 0;
     font-family: Arial, sans-serif;
+       
+}
+.container{
+    background-color:  whitesmoke;
 }
 
+.reported-container{
+    padding-bottom: 1000px;
+}
 header {
     width: 100%;
     text-align: center;
@@ -16,6 +23,16 @@ header {
     margin: 20px auto;
 }
 
+.center-links {
+    display: flex; /* Turns this container into a flex container */
+    justify-content: center; /* Horizontally centers content */
+    flex: 1; /* Takes up the remaining space */
+  }
+  
+  .center-vertical {
+    display: flex; /* Nested flexbox for vertical centering */
+    align-items: center; /* Vertically centers its children */
+  }
 
 h2{
     padding-top: 1ex;
@@ -58,7 +75,7 @@ float: left;
 color: #f2f2f2;
 text-align: center;
 align-items: center;
-padding: 14px 16px;
+padding: 15px 17px;
 text-decoration: none;
 font-size: 18px;
 }
@@ -72,7 +89,10 @@ color: black;
     margin: 0; 
     display: block; 
 }
-  
+
+.nav-brand a{
+    padding: 0px;
+}
 
 .question-container {
     display: flex;
@@ -85,7 +105,35 @@ color: black;
     margin-right: 15px; /* Adds spacing between links */
     /* font-weight: 500; /* Makes the links slightly bold */
     
-   
+.event-list{
+    display: flex;
+    flex-wrap: wrap; 
+    gap: 20px; 
+    justify-content: space-between;
+  }
+
+.profile-card{
+    background-color: #fff; 
+    border-radius: 8px; 
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
+    padding: 20px; 
+    width: calc(100%-50); 
+    box-sizing: border-box; 
+    margin: 10px 10px; 
+    overflow: hidden; 
+}
+
+
+.event-card{
+  background-color: #fff; 
+  border-radius: 8px; 
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
+  padding: 20px; 
+  width: calc(50% - 70px); 
+  box-sizing: border-box; 
+  margin: 10px 30px; 
+  overflow: hidden; 
+}
 
 
 .question {
