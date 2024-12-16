@@ -12,7 +12,84 @@
   
 </head>
 <body>
-  <header>
+      <header>
+
+
+
+        
+          <div class = "topnav">
+            <a class="navbar-brand" href="/">
+                <img src="static/images/greek2.png" alt="Logo" width="150" margin="0"> 
+            </a>
+
+            <div class="center-items">
+              <a class="nav-link" href="/">Home</a>
+            </div>
+            
+
+            <a class="nav-link" href="/logout">Logout</a>
+
+            {% if current_user.is_editor() or current_user.is_admin() %}
+                  
+              <a class="nav-link" href="/add_event">Add Event</a>
+              
+            {% endif %}
+
+            {% if current_user.is_authenticated and current_user.is_admin() %}
+                <a href="/report_event" class="nav-link"> Reported Events </a>
+            {% endif %}
+            <a class="nav-link" href="/calendar">Calendar View</a>
+            <a class="nav-link" href="{{ url_for('profile', user_id=current_user.id) }}">My Profile</a>
+        </div>
+        
+          <!-- <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+              <span class="navbar-toggler-icon"></span>
+          </button> -->
+         
+          <!-- <div class="menu-container">
+            <a href="/" class="menu-button"> Home </a>
+            <a href="/logout" class="menu-button"> Logout </a>
+            {% if current_user.is_editor() or current_user.is_admin() %}
+              <a href="/add_event" class="menu-button"> Add Event </a>
+            {% endif %}
+            <a href="/calendar" class="menu-button"> Calendar View </a>
+            <a href="{{ url_for('profile', user_id=current_user.id) }}" class="menu-button"> My Profile </a>
+            {% if current_user.is_authenticated and current_user.is_admin() %}
+              <a href="/report_event" class="menu-button"> Reported Events </a>
+            {% endif %}
+          </div> -->
+
+
+          <!-- <div class="collapse navbar-collapse" id="navbarNav">
+              <ul class="navbar-nav ms-auto">
+                  <li class="nav-item">
+                      <a class="nav-link" href="/">Home</a>
+                  </li>
+                  <li class="nav-item ms-auto">
+                      <a class="nav-link" href="">Logout</a>
+                  </li>
+                  {% if current_user.is_editor() or current_user.is_admin() %}
+                  <li class="nav-item">
+                    <a class="nav-link" href="#">Add Event</a>
+                </li>
+                {% endif %}
+                  
+                  <li class="nav-item">
+                      <a class="nav-link" href="#">Calendar View</a>
+                  </li>
+                  <li class="nav-item">
+                      <a class="nav-link" href="{{ url_for('profile', user_id=current_user.id) }}">My Profile</a>
+                  </li>
+              </ul> -->
+          <!-- </div> -->
+      </div>
+    </nav>
+
+    <!-- Bootstrap JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+
+
     <div class="container">
       {% for message in get_flashed_messages() %}
         <div class="alert alert-warning d-flex align-items-center alert-dismissible fade show">
@@ -24,7 +101,7 @@
   </header>
   <main>
     {% if current_user.is_authenticated %}
-      <h1>Logged in as {{ current_user.email }}</h1>
+      <p>Logged in as {{ current_user.email }}</p>
       <div>
         <h2>Event List</h2>
         {% if events %}
