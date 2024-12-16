@@ -23,16 +23,6 @@ header {
     margin: 20px auto;
 }
 
-.center-links {
-    display: flex; /* Turns this container into a flex container */
-    justify-content: center; /* Horizontally centers content */
-    flex: 1; /* Takes up the remaining space */
-  }
-  
-  .center-vertical {
-    display: flex; /* Nested flexbox for vertical centering */
-    align-items: center; /* Vertically centers its children */
-  }
 
 h2{
     padding-top: 1ex;
@@ -101,9 +91,7 @@ color: black;
     width: 100%;
     margin-bottom: 1em;
 }
-/* .navbar-nav .nav-link {
-    margin-right: 15px; /* Adds spacing between links */
-    /* font-weight: 500; /* Makes the links slightly bold */
+
     
 .event-list{
     display: flex;
@@ -255,10 +243,7 @@ td{
     text-decoration: none;  
 }
 
-    /* padding: 10px 20px;
-    margin: 0; /* Ensures no extra spacing is added */
-    /* font-size: 14px; Adjust as needed
-} */
+  
 .month{
     width: 100%;
     text-align: center;
