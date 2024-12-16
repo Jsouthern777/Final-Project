@@ -138,8 +138,6 @@
     return date.toLocaleDateString('en-US', options); 
   }
 
-  {# + ' at ' + date.toLocaleTimeString('en-US', { hour12: true }); #}
-
   window.onload = function() {
     const eventDate = document.querySelectorAll('.event-date');
     eventDate.forEach(function(element) {
