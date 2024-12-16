@@ -47,7 +47,7 @@
   </div>
   <main>
     {% if current_user.is_authenticated %}
-      <h1>Logged in as {{ current_user.email }}</h1>
+      <h1 class="username">Logged in as {{ current_user.email }}</h1>
       <div>
         <h2>Event List</h2>
         <div id="events-container"></div>
@@ -59,7 +59,9 @@
 </body>
 </html>
 
-<script>
+
+
+{# <script>
   function formatDateTime(dateTimeString) {
     const date = new Date(dateTimeString);
     const options = {
@@ -81,4 +83,4 @@
       element.textContent = formatDateTime(rawDate);
     });
   };
-</script>
+</script> #}

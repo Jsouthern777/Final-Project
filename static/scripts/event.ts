@@ -6,7 +6,7 @@ interface Event {
     logo: string | null;
     numRSVP: number | null;
     numReports: number | null;
-    dateTime: string | null;
+    dateTime: string | number;
     rsvpStatus?: boolean;
     reportStatus?: boolean;
 }
@@ -115,13 +115,23 @@ async function renderEvents(events: Event[]): Promise<void> {
     }
     const eventHTML = await Promise.all(events.map(async (event) => {
         const { rsvpStatus, reportStatus } = await fetchUserActions(event.id);
+        const datestring = event.dateTime; // format the date
+        const date = new Date(datestring);
+        const formatter = new Intl.DateTimeFormat("en-US", {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+            hour12: true,
+          });
         return `
             <div class="event-card">
                 <h3>${event.name}</h3>
                 <p><strong>Group:</strong> ${event.groupName}</p>
                 ${event.logo ? `<img src="/static/${event.logo}" alt="Event Logo">` : ''}
                 <p>${event.description || 'No description available.'}</p>
-                <p><strong>Date and time:</strong> ${event.dateTime || 'Not specified.'}</p>
+                <p id="event-time">${formatter.format(date) || 'Not specified.'}</p>
                 <p id="rsvp-count-${event.id}">${event.numRSVP !== null ? `${event.numRSVP} people RSVPed` : 'No RSVPs yet.'}</p>
                 <div class="event-btn-container">
                     <form action="/more_info/${event.id}" method="get">
@@ -148,3 +158,4 @@ document.addEventListener('DOMContentLoaded', async () => {
     const events = await fetchEvents();
     renderEvents(events);
 });
+
