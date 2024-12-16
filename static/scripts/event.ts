@@ -7,8 +7,8 @@ interface Event {
     numRSVP: number | null;
     numReports: number | null;
     dateTime: string | null;
-    rsvpStatus?: boolean; // Added property to store RSVP status
-    reportStatus?: boolean; // Added property to store report status
+    rsvpStatus?: boolean;
+    reportStatus?: boolean;
 }
 
 async function fetchEvents(): Promise<Event[]> {
@@ -34,10 +34,8 @@ async function fetchUserActions(eventId: number): Promise<{ rsvpStatus: boolean;
         if (!rsvpResponse.ok || !reportResponse.ok) {
             throw new Error(`Failed to fetch user actions for event ${eventId}`);
         }
-
         const rsvpData = await rsvpResponse.json();
         const reportData = await reportResponse.json();
-
         return {
             rsvpStatus: rsvpData.rsvp,
             reportStatus: reportData.report
@@ -92,7 +90,6 @@ async function renderEvents(events: Event[]): Promise<void> {
         container.innerHTML = '<p>No events found.</p>';
         return;
     }
-
     const eventHTML = await Promise.all(events.map(async (event) => {
         const { rsvpStatus, reportStatus } = await fetchUserActions(event.id);
         return `
@@ -113,7 +110,6 @@ async function renderEvents(events: Event[]): Promise<void> {
             </div>
         `;
     }));
-
     container.innerHTML = eventHTML.join('');
     const rsvpButtons = container.querySelectorAll<HTMLButtonElement>('.rsvp-btn');
     const reportButtons = container.querySelectorAll<HTMLButtonElement>('.report-btn');

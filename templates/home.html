@@ -54,18 +54,6 @@
         <h2>Event List</h2>
         <div id="events-container"></div>
       </div>
-      <div class="menu-container">
-        <a href="/" class="menu-button"> Home </a>
-        <a href="/logout" class="menu-button"> Logout </a>
-        {% if current_user.is_editor() or current_user.is_admin() %}
-          <a href="/add_event" class="menu-button"> Add Event </a>
-        {% endif %}
-        <a href="/calendar" class="menu-button"> Calendar View </a>
-        <a href="{{ url_for('profile', user_id=current_user.id) }}" class="menu-button"> My Profile </a>
-        {% if current_user.is_authenticated and current_user.is_admin() %}
-          <a href="/report_event" class="menu-button"> Reported Events </a>
-        {% endif %}
-      </div>
     {% else %}
       <h1>Welcome to GreekedIn! Register or Login</h1>
     {% endif %}
