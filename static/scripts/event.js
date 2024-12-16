@@ -102,24 +102,24 @@ async function renderEvents(events) {
     const eventHTML = await Promise.all(events.map(async (event) => {
         const { rsvpStatus, reportStatus } = await fetchUserActions(event.id);
         return `
-            <div class="event">
+            <div class="event-card">
                 <h3>${event.name}</h3>
-                <p>Group: ${event.groupName}</p>
-                ${event.logo ? `<img src="/static/${event.logo}" alt="Event Logo" width="300">` : ''}
+                <p><strong>Group:</strong> ${event.groupName}</p>
+                ${event.logo ? `<img src="/static/${event.logo}" alt="Event Logo">` : ''}
                 <p>${event.description || 'No description available.'}</p>
-                <p>Date and time: ${event.dateTime || 'Not specified.'}</p>
+                <p><strong>Date and time:</strong> ${event.dateTime || 'Not specified.'}</p>
                 <p id="rsvp-count-${event.id}">${event.numRSVP !== null ? `${event.numRSVP} people RSVPed` : 'No RSVPs yet.'}</p>
                 <div class="event-btn-container">
                     <form action="/more_info/${event.id}" method="get">
-                        <button type="submit">More Info</button>
+                        <button type="submit" class="button">More Info</button>
                     </form>
-                    <button class="rsvp-btn" data-action="${rsvpStatus ? 'unrsvp' : 'rsvp'}" data-event-id="${event.id}">${rsvpStatus ? 'Un-RSVP' : 'RSVP'}</button>
-                    <button class="report-btn" data-action="${reportStatus ? 'unreport' : 'report'}" data-event-id="${event.id}">${reportStatus ? 'Unreport' : 'Report'}</button>
+                    <button class="rsvp-btn button" data-action="${rsvpStatus ? 'unrsvp' : 'rsvp'}" data-event-id="${event.id}">${rsvpStatus ? 'Un-RSVP' : 'RSVP'}</button>
+                    <button class="report-btn button" data-action="${reportStatus ? 'unreport' : 'report'}" data-event-id="${event.id}">${reportStatus ? 'Unreport' : 'Report'}</button>
                 </div>
             </div>
         `;
     }));
-    container.innerHTML = eventHTML.join('');
+    container.innerHTML = `<div class="event-list">${eventHTML.join('')}</div>`;
     const rsvpButtons = container.querySelectorAll('.rsvp-btn');
     const reportButtons = container.querySelectorAll('.report-btn');
     rsvpButtons.forEach((button, index) => {
