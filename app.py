@@ -420,7 +420,7 @@ def rsvp_event(event_id):
 
 
 #Report an event
-@app.post('/report/<int:event_id>')
+@app.post('/report/<int:event_id>/')
 @login_required()
 def report_event(event_id):
     print("called")
