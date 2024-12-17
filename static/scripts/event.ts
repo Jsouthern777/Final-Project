@@ -130,7 +130,6 @@ async function renderEvents(events: Event[]): Promise<void> {
                 <h3>${event.name}</h3>
                 <p><strong>Group:</strong> ${event.groupName}</p>
                 ${event.logo ? `<img src="/static/${event.logo}" alt="Event Logo">` : ''}
-                <p>${event.description || 'No description available.'}</p>
                 <p id="event-time">${formatter.format(date) || 'Not specified.'}</p>
                 <p id="rsvp-count-${event.id}">${event.numRSVP !== null ? `${event.numRSVP} people RSVPed` : 'No RSVPs yet.'}</p>
                 <div class="event-btn-container">
