@@ -58,29 +58,3 @@
   </main>
 </body>
 </html>
-
-
-
-{# <script>
-  function formatDateTime(dateTimeString) {
-    const date = new Date(dateTimeString);
-    const options = {
-      weekday: 'long', 
-      year: 'numeric', 
-      month: 'long', 
-      day: 'numeric',
-      hour: 'numeric', 
-      minute: 'numeric', 
-      hour12: true, 
-    };
-    return date.toLocaleDateString('en-US', options); 
-  }
-
-  window.onload = function() {
-    const eventDate = document.querySelectorAll('.event-date');
-    eventDate.forEach(function(element) {
-      const rawDate = element.getAttribute('data-datetime');
-      element.textContent = formatDateTime(rawDate);
-    });
-  };
-</script> #}

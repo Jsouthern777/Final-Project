@@ -47,13 +47,13 @@
         <h2>Event Info</h2>
         {% if event %}
     
-            <div>
+            <div class="event-info-card">
               <h3>{{ event.name }}</h3>
               <p>Group: {{ event.groupName }}</p>
               <img src="{{ url_for('static', filename=event.logo) }}" alt="Event Logo" width="300">
               <p class="description">Description: {{ event.description }}</p>
               {% if event.dateTime %}
-                <p>Date and time: {{ event.dateTime }}</p>
+                <p class="event-date" data-datetime="{{ event.dateTime }}"> </p>
               {% else %}
                 <p>No date and time specified.</p>
               {% endif %}
@@ -101,3 +101,28 @@
   </main>
 </body>
 </html>
+
+
+<script>
+  function formatDateTime(dateTimeString) {
+    const date = new Date(dateTimeString);
+    const options = {
+      weekday: 'long', 
+      year: 'numeric', 
+      month: 'long', 
+      day: 'numeric',
+      hour: 'numeric', 
+      minute: 'numeric', 
+      hour12: true, 
+    };
+    return date.toLocaleDateString('en-US', options); 
+  }
+
+  window.onload = function() {
+    const eventDate = document.querySelectorAll('.event-date');
+    eventDate.forEach(function(element) {
+      const rawDate = element.getAttribute('data-datetime');
+      element.textContent = formatDateTime(rawDate);
+    });
+  };
+</script>

@@ -54,14 +54,17 @@
             {% if events %}
             <div class="profile-events">
                 <h2>RSVPs</h2>
-
+              
                 {% for event in events %}
-                    <h3>{{ event.name }}</h3>
+                <div class="profile-event-card">
+                    <h3 class="profile-event-name">{{ event.name }}</h3>
                     {% if event.dateTime %}
-                        <p>Date and time: {{ event.dateTime }}</p>
+                        <p class="event-date" data-datetime="{{ event.dateTime }}"> </p>
                     {% else %}
                         <p>No date and time specified.</p>
                     {% endif %}
+                    
+                </div>
 
 
                 {% endfor%}
@@ -74,19 +77,32 @@
           <p>No user found. Please Try again.</p>
         {% endif %}
       </div>
-      <!-- <div class="menu-container">
-        <a href="/" class="menu-button"> Home </a>
-        <a href="/logout" class="menu-button"> Logout </a>
-        {% if current_user.is_editor() or current_user.is_admin() %}
-          <a href="/add_event" class="menu-button"> Add Event </a>
-        {% endif %}
-        <a href="/calendar" class="menu-button"> Calendar View </a>
-        <a href="{{ url_for('profile', user_id=current_user.id) }}" class="menu-button"> My Profile </a>
-        {% if current_user.is_authenticated and current_user.is_admin() %}
-          <a href="/report_event" class="menu-button"> Reported Events </a>
-        {% endif %}
-      </div> -->
+  
     
   </main>
 </body>
 </html>
+
+<script>
+  function formatDateTime(dateTimeString) {
+    const date = new Date(dateTimeString);
+    const options = {
+      weekday: 'long', 
+      year: 'numeric', 
+      month: 'long', 
+      day: 'numeric',
+      hour: 'numeric', 
+      minute: 'numeric', 
+      hour12: true, 
+    };
+    return date.toLocaleDateString('en-US', options); 
+  }
+
+  window.onload = function() {
+    const eventDate = document.querySelectorAll('.event-date');
+    eventDate.forEach(function(element) {
+      const rawDate = element.getAttribute('data-datetime');
+      element.textContent = formatDateTime(rawDate);
+    });
+  };
+</script>

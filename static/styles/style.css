@@ -113,6 +113,28 @@ color: black;
     overflow: hidden; 
 }
 
+.profile-event-card{
+    background-color: #fff; 
+    border-radius: 8px; 
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
+    padding: 20px; 
+    width: calc(100%-50); 
+    box-sizing: border-box; 
+    margin: 10px 10px; 
+    overflow: hidden; 
+}
+
+.event-info-card{
+    background-color: #fff; 
+    border-radius: 8px; 
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
+    padding: 20px; 
+    width: calc(100%-50); 
+    box-sizing: border-box; 
+    margin: 10px 10px; 
+    overflow: hidden; 
+}
+
 .event-card {
     display: flex;
     flex-direction: column;
@@ -220,6 +242,9 @@ td{
     border-collapse: collapse;
 }
 
+.profile-event-name{
+    font-weight: 2px;
+}
 .day-text{
     position: absolute;
     top: 5px;
